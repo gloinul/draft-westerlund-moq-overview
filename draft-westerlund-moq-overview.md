@@ -1,5 +1,5 @@
 ---
-docname: draft-westerlund-moq-overview
+docname: draft-westerlund-moq-overview-latest
 title: "Media over QUIC Overview"
 abbrev: MoQ Overview
 obsoletes:
