@@ -29,10 +29,18 @@ normative:
 
 --- abstract
 
+This document provides a high level overview of Media over QUIC
+protocol components, how interoperability is specified for particular
+use cases, and how things relate.
+
 
 --- middle
 
 # Introduction {#introduction}
+
+Media over QUIC is a WG and its output of set of specifications that
+is inteded to be useable to address a couple of use cases realted to
+low latency media delivery. This document
 
 
 # Contributors
