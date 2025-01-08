@@ -1,0 +1,88 @@
+
+
+
+
+moq                                                        M. Westerlund
+Internet-Draft                                                  Ericsson
+Intended status: Standards Track                          8 January 2025
+Expires: 12 July 2025
+
+
+                        Media over QUIC Overview
+                  draft-westerlund-moq-overview-latest
+
+Abstract
+
+   This document provides a high level overview of Media over QUIC
+   protocol components, how interoperability is specified for particular
+   use cases, and how things relate.
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-westerlund-moq-overview/.
+
+   Discussion of this document takes place on the Media over QUIC (MOQ)
+   Working Group mailing list (mailto:moq@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/moq/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/moq/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/https://github.com/gloinul/draft-westerlund-moq-
+   overview.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 12 July 2025.
+
+Copyright Notice
+
+   Copyright (c) 2025 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Contributors
+   3.  Acknowledgments
+   Author's Address
+
+1.  Introduction
+
+   Media over QUIC is a WG and its output of set of specifications that
+   is inteded to be useable to address a couple of use cases realted to
+   low latency media delivery.  This document
+
+2.  Contributors
+
+3.  Acknowledgments
+
+Author's Address
+
+   Magnus Westerlund
+   Ericsson
+   Email: magnus.westerlund@ericsson.com
