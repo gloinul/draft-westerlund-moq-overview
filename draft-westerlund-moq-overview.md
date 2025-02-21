@@ -21,6 +21,11 @@ author:
    org: Ericsson
    email: magnus.westerlund@ericsson.com
 
+   ins: Z. Sarker
+   name: Zaheduzzaman Sarker
+   org: Nokia
+   email: zaheduzzaman.sarker@nokia.com
+
 informative:
 
    RFC9000:
@@ -210,10 +215,17 @@ an interoperability point that defines the following:
 
 - That MOQT as defined in {{I-D.ietf-moq-transport}} is used for Media transmission.
 
+# Subscriber <--> Publisher interaction
+Describe how subscribers are intented to know about publisher (directly or via relays).
+## Discovery
+## Session setup
+## Object metadata extension handling
 
-
-
-
+# Publisher <--> 3rd party relay interaction
+Describe how relays are intregated to and initialized by the publisher.
+## Discovery
+## Session setup
+## Object metadata extension handling
 
 # Contributors
 
