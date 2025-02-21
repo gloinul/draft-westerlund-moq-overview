@@ -2,10 +2,10 @@
 
 
 
-moq                                                        M. Westerlund
-Internet-Draft                                                  Ericsson
-Intended status: Standards Track                         30 January 2025
-Expires: 3 August 2025
+moq                                                            Z. Sarker
+Internet-Draft                                                     Nokia
+Intended status: Standards Track                        21 February 2025
+Expires: 25 August 2025
 
 
                         Media over QUIC Overview
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 August 2025.
+   This Internet-Draft will expire on 25 August 2025.
 
 Copyright Notice
 
@@ -79,9 +79,11 @@ Table of Contents
      2.5.  Media Formats
      2.6.  End-to-End Object Security
      2.7.  Application Interopability
-   3.  Contributors
-   4.  Acknowledgments
-   5.  Informative References
+   3.  Subscriber <--> Publisher interaction
+   4.  Publisher <--> 3rd party relay interaction
+   5.  Contributors
+   6.  Acknowledgments
+   7.  Informative References
    Author's Address
 
 1.  Introduction
@@ -245,11 +247,23 @@ Table of Contents
    *  That MOQT as defined in [I-D.ietf-moq-transport] is used for Media
       transmission.
 
-3.  Contributors
+3.  Subscriber <--> Publisher interaction
 
-4.  Acknowledgments
+   Describe how subscribers are intented to know about publisher
+   (directly or via relays). ## Discovery ## Session setup ## Object
+   metadata extension handling
 
-5.  Informative References
+4.  Publisher <--> 3rd party relay interaction
+
+   Describe how relays are intregated to and initialized by the
+   publisher. ## Discovery ## Session setup ## Object metadata extension
+   handling
+
+5.  Contributors
+
+6.  Acknowledgments
+
+7.  Informative References
 
    [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
               Multiplexed and Secure Transport", RFC 9000,
@@ -265,9 +279,9 @@ Table of Contents
    [I-D.ietf-moq-transport]
               Curley, L., Pugin, K., Nandakumar, S., Vasiliev, V., and
               I. Swett, "Media over QUIC Transport", Work in Progress,
-              Internet-Draft, draft-ietf-moq-transport-07, 21 October
-              2024, <https://datatracker.ietf.org/doc/html/draft-ietf-
-              moq-transport-07>.
+              Internet-Draft, draft-ietf-moq-transport-08, 12 February
+              2025, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              moq-transport-08>.
 
    [I-D.law-moq-warpstreamingformat]
               Law, W., Curley, L., Vasiliev, V., Nandakumar, S., and K.
@@ -300,6 +314,6 @@ Table of Contents
 
 Author's Address
 
-   Magnus Westerlund
-   Ericsson
-   Email: magnus.westerlund@ericsson.com
+   Zaheduzzaman Sarker
+   Nokia
+   Email: zaheduzzaman.sarker@nokia.com
