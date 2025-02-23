@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-20T00:44:08.751083+00:00",
+  "timestamp": "2025-02-23T00:48:24.564864+00:00",
   "repo": "gloinul/draft-westerlund-moq-overview",
   "labels": [
     {
@@ -50,5 +50,49 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDONfywY86L-BD-",
+      "title": "added sections to cover the publisher <--> relay <--> subscriber interaction",
+      "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/1",
+      "state": "MERGED",
+      "author": "zaheduzzaman",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The idea is to describe how everything works togather.",
+      "createdAt": "2025-02-20T23:14:51Z",
+      "updatedAt": "2025-02-21T10:45:09Z",
+      "baseRepository": "gloinul/draft-westerlund-moq-overview",
+      "baseRefName": "main",
+      "baseRefOid": "074b603469b511bc207b415e6b2edd064296beed",
+      "headRepository": "zaheduzzaman/draft-westerlund-moq-overview",
+      "headRefName": "patch-1",
+      "headRefOid": "8a5f300898f42887b1dacde75113293bcbedbebb",
+      "closedAt": "2025-02-21T09:42:54Z",
+      "mergedAt": "2025-02-21T09:42:54Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "123ed91f8d681b595427a7b3cf704026978751c9"
+      },
+      "comments": [
+        {
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "body": "I think these are interesting questions and good to clarify. But I am expecting the initial answer that this is proprietary and that third party relays will not really work.",
+          "createdAt": "2025-02-21T07:43:08Z",
+          "updatedAt": "2025-02-21T07:43:08Z"
+        },
+        {
+          "author": "zaheduzzaman",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> I think these are interesting questions and good to clarify. But I am expecting the initial answer that this is proprietary and that third party relays will not really work.\r\n\r\nRight, this is why I would say that it is important to describe what is possible and not possible with current MoQT. This would then help to either scoping the relay usage or design improvement to allow more seemless integration of 3rd party relays.",
+          "createdAt": "2025-02-21T10:45:07Z",
+          "updatedAt": "2025-02-21T10:45:07Z"
+        }
+      ],
+      "reviews": []
+    }
+  ]
 }
