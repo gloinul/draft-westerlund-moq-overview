@@ -31,10 +31,10 @@ informative:
    RFC9000:
    RFC9605:
    I-D.ietf-moq-transport:
-   I-D.law-moq-warpstreamingformat:
+   I-D.ietf-moq-warp:
    I-D.ietf-webtrans-overview:
    I-D.jennings-moq-secure-objects:
-   I-D.mzanaty-moq-loc:
+   I-D.ietf-moq-loc:
    I-D.jcenzano-moq-mi:
 
 normative:
@@ -170,7 +170,7 @@ synch.
 A catalog is not necessary for all applications, as the application
 may have a fixed track name structure with known encodings and properties.
 
-The WARP streaming format {{I-D.law-moq-warpstreamingformat}} defines
+The WARP streaming format {{I-D.ietf-moq-warp}} defines
 one catalog format, which is specific to WARP. Yet, this catalog is expected
 to be the basis for other formats and to be extended for other
 applications. It is up to the application specifications to
@@ -185,7 +185,7 @@ ensure compatibility with the decoding capabilities of the consumer endpoint.
 
 To foster interoperability, the MoQ community has initiated standardization 
 efforts around specific media formats. Currently, the primary supported format 
-is the Low Overhead Container (LOC) {{I-D.mzanaty-moq-loc}}, as defined by the 
+is the Low Overhead Container (LOC) {{I-D.ietf-moq-loc}}, as defined by the 
 WebCodecs API. LOC provides minimal packaging overhead and facilitates low-latency 
 media transport, making it suitable for real-time applications such as live 
 streaming and video conferencing.
@@ -225,7 +225,7 @@ operates can define a interoperaiblity point. An interoperability
 point is defining which components and their versions that is need to
 be supported to be interoperable.
 
-The WARP Streaming Format {{I-D.law-moq-warpstreamingformat}} is such
+The WARP Streaming Format {{I-D.ietf-moq-warp}} is such
 an interoperability point that defines the following:
 
 - The media format is LOC and with additional requirements such
