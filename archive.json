@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-04-03T00:47:20.195475+00:00",
+  "timestamp": "2025-04-06T00:52:04.338523+00:00",
   "repo": "gloinul/draft-westerlund-moq-overview",
   "labels": [
     {
@@ -93,6 +93,48 @@
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDONfywY86RNIOV",
+      "title": "editorial polishing and Media format rewriting",
+      "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/2",
+      "state": "MERGED",
+      "author": "gwendalsimon",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixed various typos and basic writing fixes.\r\nRewrote the Media format part to make the relation between LOC, CMAF, and the media-interoperability draft from Jordi",
+      "createdAt": "2025-04-03T07:08:06Z",
+      "updatedAt": "2025-04-03T07:17:34Z",
+      "baseRepository": "gloinul/draft-westerlund-moq-overview",
+      "baseRefName": "main",
+      "baseRefOid": "123ed91f8d681b595427a7b3cf704026978751c9",
+      "headRepository": "gwendalsimon/draft-westerlund-moq-overview",
+      "headRefName": "patch-1",
+      "headRefOid": "692a55d971e3551dd1ed756ad531bcce9bd48c69",
+      "closedAt": "2025-04-03T07:17:34Z",
+      "mergedAt": "2025-04-03T07:17:34Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "5cac319c10d5c9da15e3ec7a1dfeed95c3a93d3a"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONfywY86jPi4-",
+          "commit": {
+            "abbreviatedOid": "2447a8d"
+          },
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-04-03T07:17:21Z",
+          "updatedAt": "2025-04-03T07:17:21Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
