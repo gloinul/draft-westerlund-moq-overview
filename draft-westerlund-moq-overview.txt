@@ -2,10 +2,11 @@
 
 
 
-moq                                                            Z. Sarker
-Internet-Draft                                                     Nokia
-Intended status: Standards Track                            3 April 2025
-Expires: 5 October 2025
+moq                                                        M. Westerlund
+Internet-Draft                                                  Ericsson
+Intended status: Standards Track                               Z. Sarker
+Expires: 6 November 2025                                           Nokia
+                                                              5 May 2025
 
 
                         Media over QUIC Overview
@@ -48,7 +49,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 October 2025.
+   This Internet-Draft will expire on 6 November 2025.
 
 Copyright Notice
 
@@ -84,7 +85,7 @@ Table of Contents
    5.  Contributors
    6.  Acknowledgments
    7.  Informative References
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
@@ -298,11 +299,11 @@ Table of Contents
               <https://www.rfc-editor.org/info/rfc9605>.
 
    [I-D.ietf-moq-transport]
-              Curley, L., Pugin, K., Nandakumar, S., Vasiliev, V., and
-              I. Swett, "Media over QUIC Transport", Work in Progress,
-              Internet-Draft, draft-ietf-moq-transport-10, 3 March 2025,
+              Nandakumar, S., Vasiliev, V., Swett, I., and A. Frindell,
+              "Media over QUIC Transport", Work in Progress, Internet-
+              Draft, draft-ietf-moq-transport-11, 28 April 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-moq-
-              transport-10>.
+              transport-11>.
 
    [I-D.ietf-moq-warp]
               Law, W., Curley, L., Vasiliev, V., Nandakumar, S., and K.
@@ -340,7 +341,12 @@ Table of Contents
               <https://datatracker.ietf.org/doc/html/draft-cenzano-moq-
               media-interop-02>.
 
-Author's Address
+Authors' Addresses
+
+   Magnus Westerlund
+   Ericsson
+   Email: magnus.westerlund@ericsson.com
+
 
    Zaheduzzaman Sarker
    Nokia
