@@ -75,13 +75,22 @@ nodes.
 
 ### Live Streaming Media Delivery
 
+Editors Note: Describe basic delivery chain.
 
 ### Real-time Conferencing
+
+Editor Note: This might be distributed mesh and end-to-end
+distribution of original publishers.  Might be publish multiple track
+varaiants of a media, but if not enough resources, processing or
+bandwidth only one representation might exist.
 
 
 ### Content Contribution and Primary Distribution
 
-
+Editors Note: Describe ingestion. Reflect on difference with Live
+Streaming media delivery. And the fact that streaming service
+transcoding is new original publisher of the different tracks
+representing the contributors media streams.
 
 
 # Media Over QUIC overview
@@ -129,8 +138,13 @@ Fetch: Request the publisher to provide a specific range of media
        objects for a track that the publisher has previously received
        or stored.
 
+Join-Fetch:
+
 Announce: A publisher announces a track namespace, which is available
        for subscribe and fetch to the consumer.
+
+Publish:
+
 
 When the consumer is subscribed to a track, the publisher tries to
 forward all media objects of the track scheduling the transmission
@@ -176,12 +190,14 @@ to be the basis for other formats and to be extended for other
 applications. It is up to the application specifications to
 define which catalog format they use.
 
-## Media Formats
+## Object Formats
 
-MoQT treats media objects as opaque payloads. The transport protocol does not
-impose restrictions on the encoding format of these media objects. Instead,
+MoQT treats objects as opaque payloads. The transport protocol does not
+impose restrictions on the encoding format of these objects. Instead,
 interpretation of the object payload is left to the application, which must
 ensure compatibility with the decoding capabilities of the consumer endpoint.
+
+Editors note: Update to clarify Media and other object formats.
 
 To foster interoperability, the MoQ community has initiated standardization
 efforts around specific media formats. Currently, the primary supported format
@@ -248,6 +264,16 @@ Describe how relays are intregated to and initialized by the publisher.
 ## Discovery
 ## Session setup
 ## Object metadata extension handling
+
+# Security Model
+
+Editors Note: Describe both comsec and authorization, and privacy
+Describe example of how trust model for a streaming delivery service
+interacts with a CDN providing relay service.  Original publisher to
+CDN ingress. Consumer learning connect-uri, verifying relay in TLS,
+sending authorization tokens to prove right to access. Relay's
+verification. Original publisher accepting subscribes/publish to CDN
+relay network.
 
 # Contributors
 
