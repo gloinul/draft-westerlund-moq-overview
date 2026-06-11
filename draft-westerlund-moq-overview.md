@@ -34,6 +34,8 @@ informative:
    I-D.ietf-moq-msf:
    I-D.ietf-moq-cmsf:
    I-D.ietf-moq-secure-objects:
+   I-D.ietf-moq-privacy-pass-auth:
+   I-D.ietf-moq-c4m:
    I-D.ietf-moq-loc:
    I-D.ietf-webtrans-overview:
    I-D.englishm-moq-relay-dos:
@@ -143,6 +145,10 @@ The normative specifications are:
   of MSF for CMAF/ISO-BMFF packaged media.
 - MoQ Secure Objects {{I-D.ietf-moq-secure-objects}} — end-to-end
   authenticated encryption for media objects.
+- Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
+  privacy-preserving token-based authorization.
+- Common Access Tokens for MoQ (C4M) {{I-D.ietf-moq-c4m}} —
+  bearer token authorization scheme.
 - LOC (Low Overhead Container) {{I-D.ietf-moq-loc}} — a minimal
   media container format.
 
@@ -797,14 +803,30 @@ MOQT supports token-based authorization to control access to content:
 Tokens can be registered with session-scoped aliases for efficiency
 (avoiding retransmission of large tokens on every message).
 
-The MoQ working group has defined two token schemes:
+The MoQ working group has defined two authorization schemes:
 
-- Privacy Pass Authentication — anonymous, unlinkable tokens.
-- Common Access Tokens (CAT) — bearer tokens with claims.
+- Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
+  integrates Privacy Pass tokens with MOQT to provide
+  privacy-preserving, unlinkable authorization. It supports
+  fine-grained access control through namespace and track name
+  matching rules, and defines mechanisms for continuous
+  re-authorization over long-lived sessions using batched tokens or
+  a reverse issuance flow.
+
+- Common Access Tokens (C4M) {{I-D.ietf-moq-c4m}} — defines a
+  bearer token scheme using structured tokens with claims that
+  express authorization scope. C4M tokens can be provisioned
+  out-of-band and carried in the AUTHORIZATION TOKEN parameter.
+
+Both schemes operate through the same MOQT AUTHORIZATION TOKEN
+mechanism. The choice between them depends on application
+requirements: Privacy Pass prioritises subscriber anonymity, while
+C4M provides a more traditional bearer-token model familiar from
+HTTP-based systems.
 
 The streaming format catalog can signal authorization requirements
-per-track, allowing subscribers to discover what credentials they
-need before attempting to subscribe.
+per-track (via the authInfo field in MSF), allowing subscribers to
+discover what credentials they need before attempting to subscribe.
 
 ## Privacy Considerations {#privacy}
 
@@ -895,6 +917,8 @@ The following table maps common goals to the relevant specifications:
 | Build a live streaming or conferencing application using LOC | {{I-D.ietf-moq-msf}} |
 | Use CMAF packaging with DRM | {{I-D.ietf-moq-cmsf}} |
 | Add end-to-end encryption | {{I-D.ietf-moq-secure-objects}} |
+| Implement privacy-preserving authorization | {{I-D.ietf-moq-privacy-pass-auth}} |
+| Implement bearer-token authorization | {{I-D.ietf-moq-c4m}} |
 | Understand the LOC container format | {{I-D.ietf-moq-loc}} |
 | Operate relays and understand DoS resilience | {{I-D.englishm-moq-relay-dos}} |
 
