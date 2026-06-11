@@ -411,7 +411,7 @@ Relay mesh:
                    |     Relay 3     |
                    |       ^         |
                    v       |         v
- Subscriber B     Publisher D        Subscriber E
+         Subscriber B  Publisher D  Subscriber E
 ~~~
 
 In all topologies, each hop is an independent MOQT session. Relays
