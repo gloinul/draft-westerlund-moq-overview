@@ -256,15 +256,15 @@ audio and video tracks and subscribes to tracks from other
 participants.
 
 ~~~
- Participant A ---+           +--- Participant C
-                  |           |
-                  v           v
-              +-------+ +-------+
-              | Relay | | Relay |
-              +-------+ +-------+
-                  ^           ^
-                  |           |
- Participant B ---+           +--- Participant D
+ Participant A ---+            +--- Participant C
+                  |            |
+                  v            v
+              +-------+    +-------+
+              | Relay |<-->| Relay |
+              +-------+    +-------+
+                  ^            ^
+                  |            |
+ Participant B ---+            +--- Participant D
 ~~~
 
 Key characteristics:
