@@ -395,6 +395,25 @@ Relay tree:
  Publisher <--> Origin Relay <--> Edge Relay(s) <--> Subscriber(s)
 ~~~
 
+Relay mesh:
+: Relays interconnect with multiple peers, subscribing and
+  publishing bidirectionally between each other. Each relay both
+  receives content from and forwards content to its neighbouring
+  relays. This topology suits conferencing and multi-publisher
+  scenarios where content flows in multiple directions
+  simultaneously and there is no single origin.
+
+~~~
+ Publisher A <--> Relay 1 <----> Relay 2 <--> Subscriber C
+                   ^    ^       ^    ^
+                   |     \     /     |
+                   |      v   v      |
+                   |     Relay 3     |
+                   |       ^         |
+                   v       |         v
+ Subscriber B     Publisher D        Subscriber E
+~~~
+
 In all topologies, each hop is an independent MOQT session. Relays
 manage subscriptions on each session independently and can
 aggregate multiple downstream subscriptions into a single upstream
