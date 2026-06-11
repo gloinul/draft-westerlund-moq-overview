@@ -54,29 +54,28 @@ how they are composed to create interoperable media applications.
 
 # Introduction {#introduction}
 
-Media over QUIC (MoQ) is a set of IETF specifications that define a
-publish/subscribe transport protocol built on QUIC {{RFC9000}}. The
-transport protocol, MOQT, is content-agnostic: it delivers opaque
-objects organised into tracks and groups without imposing any
-requirements on what those objects contain. While the working group's
-primary motivation is media delivery — from interactive real-time
-communication to live streaming at scale — the protocol's
-publish/subscribe semantics, relay architecture, and priority
-mechanisms are applicable to any use case that benefits from scalable,
-low-latency, one-to-many or many-to-many object distribution.
+Media over QUIC (MoQ) is an IETF working group producing a set of
+specifications for scalable, low-latency delivery over the Internet.
+The core output is MOQT, a publish/subscribe transport protocol built
+on QUIC {{RFC9000}} that uses intermediate relays to achieve
+distribution at scale. On top of MOQT, additional specifications
+define streaming formats, media containers, and end-to-end security
+mechanisms.
 
-Despite its name, MOQT does not embed media-specific logic. Media
-semantics (codecs, containers, synchronisation, adaptive bitrate
-switching) are defined entirely by streaming formats that layer on top
-of MOQT. This separation means that MOQT can equally carry sensor
-telemetry, game state updates, financial data feeds, or any other
-application data that fits the track/group/object model.
-
-This document provides an overview of the MoQ protocol components and
-how they fit together. It is intended as an entry point for
+This document provides a high-level overview of these components, how
+they relate to each other, and how they are composed to create
+interoperable applications. It is intended as an entry point for
 implementers, reviewers, and protocol designers who want to understand
-the overall system before diving into individual normative
+the overall system before reading the individual normative
 specifications.
+
+Although the working group's primary motivation is media delivery,
+MOQT itself is content-agnostic — it transports opaque objects
+without knowledge of their payload. Media-specific logic (codecs,
+containers, adaptive bitrate switching) is defined in separate
+streaming format specifications that layer on top of the transport.
+This separation means the protocol can serve other applications that
+benefit from the same publish/subscribe, relay-based delivery model.
 
 ## Motivation {#motivation}
 
