@@ -50,7 +50,8 @@ protocol behaviour.
         - Content-agnostic but not application-agnostic
         - Fan-out, caching, topology
         - Trust and operational considerations (brief, point to relay-dos)
-   3.3. Deployment Topologies (point-to-point, single relay, relay tree)
+   3.3. Deployment Topologies
+        (point-to-point, single relay, relay tree, relay mesh)
 
 4. Data Model
    4.1. Tracks, Groups, Subgroups, Objects
@@ -77,7 +78,10 @@ protocol behaviour.
 7. Security Architecture
    7.1. Hop-by-Hop Security (TLS/QUIC)
    7.2. End-to-End Object Encryption (MoQ Secure Objects / SFrame)
-   7.3. Authorization Model (tokens, relay verification)
+   7.3. Authorization Model
+        - AUTHORIZATION TOKEN mechanism in MOQT
+        - Privacy Pass Authentication (I-D.ietf-moq-privacy-pass-auth)
+        - Common Access Tokens / C4M (I-D.ietf-moq-c4m)
    7.4. Privacy Considerations
 
 8. Achieving Interoperability
@@ -193,7 +197,16 @@ Point-to-point:    Publisher ←→ Subscriber
 Single relay:      Publisher ←→ Relay ←→ Subscriber(s)
 
 Relay tree:        Publisher ←→ Origin Relay ←→ Edge Relay(s) ←→ Subscriber(s)
+
+Relay mesh:        Relays interconnect bidirectionally (pub+sub both directions)
+                   Suits conferencing / multi-publisher; no single origin
 ```
+
+Key points for relay mesh:
+- Each relay both subscribes to and publishes toward its peer relays
+- Content flows in multiple directions simultaneously
+- Typical for conferencing where every participant is both publisher and subscriber
+- Loops are possible; relay implementations need deduplication
 
 Mention that relay chains can be longer, and that GOAWAY enables migration.
 
@@ -463,6 +476,8 @@ None.
 | `I-D.ietf-moq-warp` | `I-D.ietf-moq-msf` |
 | `I-D.jennings-moq-secure-objects` | `I-D.ietf-moq-secure-objects` |
 | (add) | `I-D.ietf-moq-cmsf` |
+| (add) | `I-D.ietf-moq-privacy-pass-auth` |
+| (add) | `I-D.ietf-moq-c4m` |
 | (add) | `I-D.englishm-moq-relay-dos` |
 | (add) | `I-D.ietf-moq-loc` (already present) |
 | `I-D.cenzano-moq-media-interop` | Remove (content now in MSF/LOC) |
