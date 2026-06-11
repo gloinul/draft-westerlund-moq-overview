@@ -54,12 +54,23 @@ how they are composed to create interoperable media applications.
 
 # Introduction {#introduction}
 
-Media over QUIC (MoQ) is a set of IETF specifications designed for
-media delivery over the Internet, ranging from interactive real-time
-communication to live streaming at scale. The protocol suite is built
-on QUIC {{RFC9000}} and uses a publish/subscribe model with
-intermediate relays as first-class participants in the delivery
-architecture.
+Media over QUIC (MoQ) is a set of IETF specifications that define a
+publish/subscribe transport protocol built on QUIC {{RFC9000}}. The
+transport protocol, MOQT, is content-agnostic: it delivers opaque
+objects organised into tracks and groups without imposing any
+requirements on what those objects contain. While the working group's
+primary motivation is media delivery — from interactive real-time
+communication to live streaming at scale — the protocol's
+publish/subscribe semantics, relay architecture, and priority
+mechanisms are applicable to any use case that benefits from scalable,
+low-latency, one-to-many or many-to-many object distribution.
+
+Despite its name, MOQT does not embed media-specific logic. Media
+semantics (codecs, containers, synchronisation, adaptive bitrate
+switching) are defined entirely by streaming formats that layer on top
+of MOQT. This separation means that MOQT can equally carry sensor
+telemetry, game state updates, financial data feeds, or any other
+application data that fits the track/group/object model.
 
 This document provides an overview of the MoQ protocol components and
 how they fit together. It is intended as an entry point for
@@ -104,6 +115,14 @@ Relays:
   participants: object metadata is structured so that relays can
   route, prioritise, and cache content without accessing the media
   payload itself.
+
+The resulting protocol is a general-purpose pub/sub delivery layer.
+The media-specific aspects — how audio and video samples are
+packaged, how tracks are described in a catalog, how adaptive
+bitrate switching works — are defined by separate streaming format
+specifications that build on MOQT. Applications outside media
+delivery can use MOQT directly with their own object formats,
+without adopting any of the media-specific layers.
 
 ## Document Scope {#scope}
 
@@ -185,11 +204,18 @@ Transport Session:
 
 # Use Cases {#use-cases}
 
-The MoQ protocol suite is designed to support a range of media
-delivery scenarios. This section describes the primary use cases that
-have driven the protocol design. MoQ is not limited to these use
-cases, but they illustrate the requirements that shaped the
-architecture.
+As noted in {{introduction}}, MOQT is a content-agnostic
+publish/subscribe protocol. It can carry any data that fits the
+track/group/object model — media is simply the use case that
+motivated its design. Other potential applications include IoT
+telemetry distribution, collaborative document state
+synchronisation, real-time game state replication, and financial
+market data feeds.
+
+This section describes the primary media use cases that have driven
+the protocol design. They illustrate the requirements that shaped
+the architecture, but do not represent an exhaustive list of what
+MOQT can be used for.
 
 ## Live Streaming Media Delivery {#uc-live}
 
@@ -491,9 +517,11 @@ communicate lifecycle information.
 # MOQT: The Transport Protocol {#transport}
 
 Media over QUIC Transport (MOQT) {{I-D.ietf-moq-transport}} is the
-publish/subscribe protocol that carries media objects between
-publishers and subscribers. This section provides an overview of its
-key mechanisms.
+publish/subscribe protocol that carries objects between publishers and
+subscribers. MOQT treats all object payloads as opaque byte sequences
+— it provides delivery, prioritisation, and caching without any
+knowledge of the content being carried. This section provides an
+overview of its key mechanisms.
 
 ## Session Establishment {#session-establishment}
 
