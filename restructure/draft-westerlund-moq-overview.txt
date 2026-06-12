@@ -5,8 +5,8 @@
 moq                                                        M. Westerlund
 Internet-Draft                                                  Ericsson
 Intended status: Informational                                 Z. Sarker
-Expires: 13 December 2026                                          Nokia
-                                                            11 June 2026
+Expires: 14 December 2026                                          Nokia
+                                                            12 June 2026
 
 
                         Media over QUIC Overview
@@ -53,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 13 December 2026.
+   This Internet-Draft will expire on 14 December 2026.
 
 Copyright Notice
 
@@ -103,11 +103,10 @@ Table of Contents
      7.2.  End-to-End Object Encryption
      7.3.  Authorization
      7.4.  Privacy Considerations
-   8.  Achieving Interoperability
-     8.1.  What Defines an Interoperability Point
-     8.2.  MSF as the Working Group Interoperability Point
-     8.3.  Extending for New Use Cases
-     8.4.  Reading Guide
+   8.  Defining a MoQ Application
+     8.1.  Application Design Choices
+     8.2.  Existing Application Definitions
+     8.3.  Reading Guide
    9.  Security Considerations
    10. IANA Considerations
    11. Contributors
@@ -844,39 +843,33 @@ Table of Contents
 
 7.3.  Authorization
 
-   MOQT supports token-based authorization to control access to content:
+   MOQT provides a generic AUTHORIZATION TOKEN parameter that can be
+   included in control messages (SUBSCRIBE, FETCH, PUBLISH,
+   PUBLISH_NAMESPACE, and others).  Both publishers and subscribers use
+   this single mechanism to present credentials; relays verify the token
+   before forwarding content or establishing upstream subscriptions.
+   Tokens can be registered with session-scoped aliases to avoid
+   retransmitting large values on every message.
 
-   *  Subscribers present authorization tokens in SUBSCRIBE, FETCH, and
-      other control messages using the AUTHORIZATION TOKEN parameter.
-
-   *  Publishers present tokens in PUBLISH and PUBLISH_NAMESPACE
-      messages.
-
-   *  Relays verify tokens before forwarding content or establishing
-      upstream subscriptions.
-
-   Tokens can be registered with session-scoped aliases for efficiency
-   (avoiding retransmission of large tokens on every message).
-
-   The MoQ working group has defined two authorization schemes:
+   The working group has defined two authorization schemes that operate
+   over this mechanism:
 
    *  Privacy Pass Authentication [I-D.ietf-moq-privacy-pass-auth] —
-      integrates Privacy Pass tokens with MOQT to provide privacy-
-      preserving, unlinkable authorization.  It supports fine-grained
-      access control through namespace and track name matching rules,
-      and defines mechanisms for continuous re-authorization over long-
-      lived sessions using batched tokens or a reverse issuance flow.
+      provides privacy-preserving, unlinkable authorization using
+      Privacy Pass tokens.  It supports fine-grained access control
+      through namespace and track name matching rules, and defines
+      mechanisms for continuous re-authorization over long-lived
+      sessions using batched tokens or a reverse issuance flow.
 
-   *  Common Access Tokens (C4M) [I-D.ietf-moq-c4m] — defines a bearer
+   *  Common Access Tokens (C4M) [I-D.ietf-moq-c4m] — provides a bearer
       token scheme using structured tokens with claims that express
-      authorization scope.  C4M tokens can be provisioned out-of-band
-      and carried in the AUTHORIZATION TOKEN parameter.
+      authorization scope.  C4M follows a model familiar from HTTP-based
+      systems.
 
-   Both schemes operate through the same MOQT AUTHORIZATION TOKEN
-   mechanism.  The choice between them depends on application
-   requirements: Privacy Pass prioritises subscriber anonymity, while
-   C4M provides a more traditional bearer-token model familiar from
-   HTTP-based systems.
+   The choice between schemes depends on application requirements:
+   Privacy Pass prioritises subscriber anonymity, while C4M offers
+   simpler integration for deployments with existing identity
+   infrastructure.
 
    The streaming format catalog can signal authorization requirements
    per-track (via the authInfo field in MSF), allowing subscribers to
@@ -884,96 +877,95 @@ Table of Contents
 
 7.4.  Privacy Considerations
 
-   Several aspects of MoQ have privacy implications:
+   MoQ's relay-based architecture means that intermediaries necessarily
+   observe certain metadata in the course of routing and caching
+   content.  Key privacy considerations include:
 
-   *  Track namespaces and names are visible to all relays in the
-      delivery path.  They can reveal information about content (e.g., a
-      namespace containing a username).
+   *  Relay visibility of metadata: Track namespaces, track names, group
+      IDs, and object properties are visible to every relay in the
+      delivery path.  This metadata can reveal information about content
+      and participants even when payloads are end-to-end encrypted.
 
-   *  Object sizes and traffic patterns can enable content
-      identification through traffic analysis, even when payloads are
-      encrypted.
+   *  Traffic analysis: Object sizes, timing patterns, and subscription
+      behaviour can allow relays or on-path observers to infer what
+      content is being consumed or who is communicating.
 
-   *  The MOQT_IMPLEMENTATION Setup Option identifies the software,
-      potentially enabling fingerprinting across sessions.
+   *  Subscriber unlinkability: Without privacy-preserving authorization
+      (such as Privacy Pass), relays can correlate a subscriber's
+      identity across multiple sessions or subscriptions.
 
-   *  Padding streams and datagrams (defined in MOQT) can be used to
-      obscure traffic patterns, but their effectiveness depends on the
-      padding strategy.
+   MOQT provides mechanisms that applications can use to mitigate these
+   risks, including padding (to obscure traffic patterns) and token
+   schemes that support unlinkable authentication.  However, achieving
+   strong privacy requires deliberate application design — for example,
+   using generic namespace structures and consistent object sizes.
 
-   Applications that require strong privacy properties should consider
-   these risks and apply appropriate mitigations (e.g., generic
-   namespace structures, consistent object sizes, omitting the
-   implementation identifier).
-
-8.  Achieving Interoperability
+8.  Defining a MoQ Application
 
    MOQT, streaming formats, container formats, and security mechanisms
-   are designed as composable building blocks.  An interoperable MoQ
-   application is defined by specifying which combination of these
-   components is required.
+   are composable building blocks.  A complete MoQ application is
+   defined by specifying which components to use and how they are
+   configured.  This set of choices is also what creates an
+   interoperability point: two implementations that make the same
+   choices can exchange content without additional negotiation.
 
-8.1.  What Defines an Interoperability Point
+8.1.  Application Design Choices
 
-   An interoperability point specifies:
+   Defining a MoQ application requires decisions in each of the
+   following areas:
 
-   1.  The MOQT version (identified by ALPN value).
+   Transport version:  Which MOQT version (ALPN value) the application
+      requires.  This determines the available protocol features.
 
-   2.  The streaming format (e.g., MSF version 1, CMSF version 1).
+   Streaming format and catalog:  How media or data is packaged into
+      MOQT objects, and how available tracks are described to
+      subscribers.  An application may adopt an existing format (MSF,
+      CMSF) or define a new one.
 
-   3.  The media container and supported codecs.
+   Container and codecs:  What container format wraps the encoded
+      samples (e.g., LOC, CMAF) and which codecs are supported.
 
-   4.  Security requirements (E2E encryption scheme, authorization
-       scheme, or none).
+   Security:  Whether end-to-end encryption is required (and which
+      scheme), and which authorization scheme(s) are used to control
+      access.
 
-   5.  Any mandatory MOQT extensions (Properties, Setup Options).
+   Relay deployment model:  How relays are deployed and operated — tree,
+      mesh, or hybrid — and what trust and authorization policies apply
+      between nodes.
 
-   Two implementations that support the same interoperability point can
-   exchange media without additional negotiation.
+   Extensions:  Any mandatory MOQT extensions (Properties, Setup
+      Options) that endpoints must support.  Applications that need
+      relay-visible metadata beyond what MOQT defines can register new
+      Properties or use the application-reserved type ranges.
 
-8.2.  MSF as the Working Group Interoperability Point
+   If existing components do not cover an application's needs, the MoQ
+   framework supports extension without modifying the base protocol: new
+   streaming formats can define their own catalog structures and
+   packaging rules, new Properties can be registered via IANA, and new
+   event timeline types can be defined for synchronised metadata.
 
-   The MoQ working group defines MSF as its primary interoperability
-   point for LOC-based media delivery.  An MSF-interoperable
-   implementation supports:
+8.2.  Existing Application Definitions
 
-   *  MOQT as defined in [I-D.ietf-moq-transport].
+   The MoQ working group has defined two complete application
+   specifications that illustrate the design choices above:
 
-   *  MSF catalog format version 1 as defined in [I-D.ietf-moq-msf].
+   MSF (MOQT Streaming Format):  Uses MOQT + LOC packaging + a JSON
+      catalog.  Targets real-time and live streaming with LOC's minimal
+      per-sample overhead.  Supports ABR switching via time-aligned
+      alternate groups, media timelines, event timelines, and publish
+      tracks for subscriber-to-platform communication.  Defined in
+      [I-D.ietf-moq-msf].
 
-   *  LOC packaging with time-aligned tracks for ABR switching.
+   CMSF (CMAF-compliant Streaming Format):  Extends MSF with CMAF/ISO-
+      BMFF packaging and Common Encryption (CENC) for DRM integration.
+      Targets deployments that interoperate with existing DASH/HLS
+      ecosystems and hardware content decryption.  Defined in
+      [I-D.ietf-moq-cmsf].
 
-   *  The codecs and properties defined by LOC ([I-D.ietf-moq-loc]).
+   Both specifications make concrete choices for every area listed in
+   Section 8.1, producing fully interoperable application definitions.
 
-   For applications requiring CMAF packaging and DRM integration, CMSF
-   ([I-D.ietf-moq-cmsf]) provides an additional interoperability point
-   that extends MSF.
-
-8.3.  Extending for New Use Cases
-
-   New applications can extend the MoQ framework without modifying the
-   base transport protocol:
-
-   *  Define a new streaming format with its own catalog structure and
-      packaging rules.
-
-   *  Register new MOQT Properties for application-specific metadata.
-
-   *  Use the application-reserved Property type ranges (0x38-0x3F,
-      0x3800-0x3FFF) for format-specific metadata without IANA
-      registration.
-
-   *  Register new event timeline types for synchronised metadata.
-
-   *  Use Mandatory Track Properties (type range 0x4000-0x7FFF) when an
-      extension must be understood by all endpoints processing the
-      track.
-
-   The extensibility mechanisms in MOQT (Setup Options, Properties,
-   GREASE) ensure that new features can be deployed incrementally
-   without breaking existing implementations.
-
-8.4.  Reading Guide
+8.3.  Reading Guide
 
    The following table maps common goals to the relevant specifications:
 
