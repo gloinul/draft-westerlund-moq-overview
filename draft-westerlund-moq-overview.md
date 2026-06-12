@@ -844,24 +844,30 @@ discover what credentials they need before attempting to subscribe.
 
 ## Privacy Considerations {#privacy}
 
-Several aspects of MoQ have privacy implications:
+MoQ's relay-based architecture means that intermediaries necessarily
+observe certain metadata in the course of routing and caching
+content. Key privacy considerations include:
 
-- Track namespaces and names are visible to all relays in the
-  delivery path. They can reveal information about content (e.g.,
-  a namespace containing a username).
-- Object sizes and traffic patterns can enable content
-  identification through traffic analysis, even when payloads are
+- Relay visibility of metadata: Track namespaces, track names,
+  group IDs, and object properties are visible to every relay in
+  the delivery path. This metadata can reveal information about
+  content and participants even when payloads are end-to-end
   encrypted.
-- The MOQT_IMPLEMENTATION Setup Option identifies the software,
-  potentially enabling fingerprinting across sessions.
-- Padding streams and datagrams (defined in MOQT) can be used to
-  obscure traffic patterns, but their effectiveness depends on the
-  padding strategy.
 
-Applications that require strong privacy properties should consider
-these risks and apply appropriate mitigations (e.g., generic
-namespace structures, consistent object sizes, omitting the
-implementation identifier).
+- Traffic analysis: Object sizes, timing patterns, and
+  subscription behaviour can allow relays or on-path observers to
+  infer what content is being consumed or who is communicating.
+
+- Subscriber unlinkability: Without privacy-preserving
+  authorization (such as Privacy Pass), relays can correlate a
+  subscriber's identity across multiple sessions or subscriptions.
+
+MOQT provides mechanisms that applications can use to mitigate
+these risks, including padding (to obscure traffic patterns) and
+token schemes that support unlinkable authentication. However,
+achieving strong privacy requires deliberate application design —
+for example, using generic namespace structures and consistent
+object sizes.
 
 
 # Achieving Interoperability {#interoperability}
