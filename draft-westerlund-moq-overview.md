@@ -810,38 +810,33 @@ streaming).
 
 ## Authorization {#authorization}
 
-MOQT supports token-based authorization to control access to content:
+MOQT provides a generic AUTHORIZATION TOKEN parameter that can be
+included in control messages (SUBSCRIBE, FETCH, PUBLISH,
+PUBLISH_NAMESPACE, and others). Both publishers and subscribers use
+this single mechanism to present credentials; relays verify the
+token before forwarding content or establishing upstream
+subscriptions. Tokens can be registered with session-scoped aliases
+to avoid retransmitting large values on every message.
 
-- Subscribers present authorization tokens in SUBSCRIBE, FETCH, and
-  other control messages using the AUTHORIZATION TOKEN parameter.
-- Publishers present tokens in PUBLISH and PUBLISH_NAMESPACE
-  messages.
-- Relays verify tokens before forwarding content or establishing
-  upstream subscriptions.
-
-Tokens can be registered with session-scoped aliases for efficiency
-(avoiding retransmission of large tokens on every message).
-
-The MoQ working group has defined two authorization schemes:
+The working group has defined two authorization schemes that operate
+over this mechanism:
 
 - Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
-  integrates Privacy Pass tokens with MOQT to provide
-  privacy-preserving, unlinkable authorization. It supports
-  fine-grained access control through namespace and track name
-  matching rules, and defines mechanisms for continuous
-  re-authorization over long-lived sessions using batched tokens or
-  a reverse issuance flow.
+  provides privacy-preserving, unlinkable authorization using
+  Privacy Pass tokens. It supports fine-grained access control
+  through namespace and track name matching rules, and defines
+  mechanisms for continuous re-authorization over long-lived
+  sessions using batched tokens or a reverse issuance flow.
 
-- Common Access Tokens (C4M) {{I-D.ietf-moq-c4m}} — defines a
+- Common Access Tokens (C4M) {{I-D.ietf-moq-c4m}} — provides a
   bearer token scheme using structured tokens with claims that
-  express authorization scope. C4M tokens can be provisioned
-  out-of-band and carried in the AUTHORIZATION TOKEN parameter.
+  express authorization scope. C4M follows a model familiar from
+  HTTP-based systems.
 
-Both schemes operate through the same MOQT AUTHORIZATION TOKEN
-mechanism. The choice between them depends on application
-requirements: Privacy Pass prioritises subscriber anonymity, while
-C4M provides a more traditional bearer-token model familiar from
-HTTP-based systems.
+The choice between schemes depends on application requirements:
+Privacy Pass prioritises subscriber anonymity, while C4M offers
+simpler integration for deployments with existing identity
+infrastructure.
 
 The streaming format catalog can signal authorization requirements
 per-track (via the authInfo field in MSF), allowing subscribers to
