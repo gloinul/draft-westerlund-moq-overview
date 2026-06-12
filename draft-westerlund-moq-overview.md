@@ -870,62 +870,74 @@ for example, using generic namespace structures and consistent
 object sizes.
 
 
-# Achieving Interoperability {#interoperability}
+# Defining a MoQ Application {#application}
 
 MOQT, streaming formats, container formats, and security mechanisms
-are designed as composable building blocks. An interoperable MoQ
-application is defined by specifying which combination of these
-components is required.
+are composable building blocks. A complete MoQ application is defined
+by specifying which components to use and how they are configured.
+This set of choices is also what creates an interoperability point:
+two implementations that make the same choices can exchange content
+without additional negotiation.
 
-## What Defines an Interoperability Point {#interop-definition}
+## Application Design Choices {#design-choices}
 
-An interoperability point specifies:
+Defining a MoQ application requires decisions in each of the
+following areas:
 
-1. The MOQT version (identified by ALPN value).
-2. The streaming format (e.g., MSF version 1, CMSF version 1).
-3. The media container and supported codecs.
-4. Security requirements (E2E encryption scheme, authorization
-   scheme, or none).
-5. Any mandatory MOQT extensions (Properties, Setup Options).
+Transport version:
+: Which MOQT version (ALPN value) the application requires. This
+  determines the available protocol features.
 
-Two implementations that support the same interoperability point can
-exchange media without additional negotiation.
+Streaming format and catalog:
+: How media or data is packaged into MOQT objects, and how
+  available tracks are described to subscribers. An application may
+  adopt an existing format (MSF, CMSF) or define a new one.
 
-## MSF as the Working Group Interoperability Point {#msf-interop}
+Container and codecs:
+: What container format wraps the encoded samples (e.g., LOC, CMAF)
+  and which codecs are supported.
 
-The MoQ working group defines MSF as its primary interoperability
-point for LOC-based media delivery. An MSF-interoperable
-implementation supports:
+Security:
+: Whether end-to-end encryption is required (and which scheme), and
+  which authorization scheme(s) are used to control access.
 
-- MOQT as defined in {{I-D.ietf-moq-transport}}.
-- MSF catalog format version 1 as defined in {{I-D.ietf-moq-msf}}.
-- LOC packaging with time-aligned tracks for ABR switching.
-- The codecs and properties defined by LOC
-  ({{I-D.ietf-moq-loc}}).
+Relay deployment model:
+: How relays are deployed and operated — tree, mesh, or hybrid —
+  and what trust and authorization policies apply between nodes.
 
-For applications requiring CMAF packaging and DRM integration, CMSF
-({{I-D.ietf-moq-cmsf}}) provides an additional interoperability
-point that extends MSF.
+Extensions:
+: Any mandatory MOQT extensions (Properties, Setup Options) that
+  endpoints must support. Applications that need relay-visible
+  metadata beyond what MOQT defines can register new Properties or
+  use the application-reserved type ranges.
 
-## Extending for New Use Cases {#extending}
+If existing components do not cover an application's needs, the MoQ
+framework supports extension without modifying the base protocol:
+new streaming formats can define their own catalog structures and
+packaging rules, new Properties can be registered via IANA, and new
+event timeline types can be defined for synchronised metadata.
 
-New applications can extend the MoQ framework without modifying the
-base transport protocol:
+## Existing Application Definitions {#existing-apps}
 
-- Define a new streaming format with its own catalog structure and
-  packaging rules.
-- Register new MOQT Properties for application-specific metadata.
-- Use the application-reserved Property type ranges (0x38-0x3F,
-  0x3800-0x3FFF) for format-specific metadata without IANA
-  registration.
-- Register new event timeline types for synchronised metadata.
-- Use Mandatory Track Properties (type range 0x4000-0x7FFF) when an
-  extension must be understood by all endpoints processing the
-  track.
+The MoQ working group has defined two complete application
+specifications that illustrate the design choices above:
 
-The extensibility mechanisms in MOQT (Setup Options, Properties,
-GREASE) ensure that new features can be deployed incrementally
-without breaking existing implementations.
+MSF (MOQT Streaming Format):
+: Uses MOQT + LOC packaging + a JSON catalog. Targets real-time and
+  live streaming with LOC's minimal per-sample overhead. Supports
+  ABR switching via time-aligned alternate groups, media timelines,
+  event timelines, and publish tracks for subscriber-to-platform
+  communication. Defined in {{I-D.ietf-moq-msf}}.
+
+CMSF (CMAF-compliant Streaming Format):
+: Extends MSF with CMAF/ISO-BMFF packaging and Common Encryption
+  (CENC) for DRM integration. Targets deployments that interoperate
+  with existing DASH/HLS ecosystems and hardware content decryption.
+  Defined in {{I-D.ietf-moq-cmsf}}.
+
+Both specifications make concrete choices for every area listed in
+{{design-choices}}, producing fully interoperable application
+definitions.
 
 ## Reading Guide {#reading-guide}
 
