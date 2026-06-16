@@ -56,7 +56,7 @@ how they are composed to create interoperable media applications.
 
 # Introduction {#introduction}
 
-Media over QUIC (MoQ) is an IETF working group producing a set of
+Media over QUIC (MoQ) incorporates a set of
 specifications for scalable, low-latency delivery over the Internet.
 The core output is MOQT, a publish/subscribe transport protocol built
 on QUIC {{RFC9000}} that uses intermediate relays to achieve
@@ -64,14 +64,14 @@ distribution at scale. On top of MOQT, additional specifications
 define streaming formats, media containers, and end-to-end security
 mechanisms.
 
-This document provides a high-level overview of these components, how
+This document provides a high-level overview of these component protocols, how
 they relate to each other, and how they are composed to create
 interoperable applications. It is intended as an entry point for
 implementers, reviewers, and protocol designers who want to understand
 the overall system before reading the individual normative
 specifications.
 
-Although the working group's primary motivation is media delivery,
+Although the primary motivation of MoQ is media delivery,
 MOQT itself is content-agnostic — it transports opaque objects
 without knowledge of their payload. Media-specific logic (codecs,
 containers, adaptive bitrate switching) is defined in separate
@@ -135,7 +135,7 @@ or create new requirements. Its purpose is to:
 - Point readers to the relevant normative specification for each
   topic.
 
-The normative specifications are:
+The covered specifications are:
 
 - MOQT (Media over QUIC Transport) {{I-D.ietf-moq-transport}} —
   the publish/subscribe transport protocol.
@@ -360,7 +360,10 @@ topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
 streaming platform operates differently from one supporting a
 conferencing service, even though the protocol mechanics are
-identical.
+identical. Moreover, eventhough relays need not parse media payload 
+formats in order to forward content, but they may still apply 
+application-aware policy based on visible metadata, naming 
+conventions, and authorization state.
 
 For further discussion of relay operational considerations,
 including denial-of-service resilience, see
@@ -474,10 +477,10 @@ Every track is identified by a Full Track Name consisting of two
 parts:
 
 Track Namespace:
-: An ordered tuple of one or more fields (e.g., "example.com",
-  "meeting123", "alice"). The namespace provides hierarchical
-  structure that relays use for prefix-based routing and
-  subscription matching.
+: An ordered tuple of one or more fields ( up to 32) (e.g., 
+  "example.com", "meeting123", "alice"). The namespace provides 
+  hierarchical structure that relays use for prefix-based routing
+  and subscription matching.
 
 Track Name:
 : A byte sequence identifying a specific track within the
@@ -502,10 +505,12 @@ Track Properties:
   FETCH_OK).
 
 Object Properties:
-: Per-object metadata carried in object headers. Examples include
-  gap indicators (Prior Group ID Gap, Prior Object ID Gap) and
-  media-specific fields such as timestamps and frame markings
-  (defined in {{I-D.ietf-moq-loc}}).
+: Per-object metadata carried in object headers. MOQT defines 
+  the framework for object properties (examples include gap 
+  indicators - Prior Group ID Gap, Prior Object ID Gap, while 
+  media-specific specifications such as timestamps and frame 
+  markings are defined in LOC and MSF define additional semantics 
+  for properties relevant to encoded audio/video samples.
 
 Immutable Properties:
 : A special container within either track or object properties
@@ -557,9 +562,12 @@ MOQT runs over either native QUIC or WebTransport:
 - WebTransport: The client establishes a WebTransport session over
   HTTP/3, using an HTTPS URI derived from the moqt:// URI.
 
-Both transports provide multiplexed streams, unreliable datagrams,
-and TLS 1.3 security. The choice between them depends on deployment
-constraints (e.g., browser environments require WebTransport).
+MOQT can run over native QUIC or over WebTransport over HTTP/3. 
+While both provide stream multiplexing and secure transport, the 
+deployment model and some capabilities are constrained differently, 
+especially in browser-based WebTransport environments. Applications 
+should treat them as functionally similar substrates, not strictly 
+identical ones.
 
 After the transport connection is established, each endpoint opens a
 unidirectional control stream and sends a SETUP message. The SETUP
@@ -686,7 +694,7 @@ how to synchronise multiple tracks.
 ## MSF: MOQT Streaming Format {#msf}
 
 The MOQT Streaming Format (MSF) {{I-D.ietf-moq-msf}} is the primary
-streaming format defined by the MoQ working group. It uses LOC (Low
+streaming format defined for MoQ. It uses LOC (Low
 Overhead Container) {{I-D.ietf-moq-loc}} packaging, where each
 encoded media sample (audio frame or video frame) is placed in a
 separate MOQT object.
@@ -801,7 +809,11 @@ The scheme:
 
 Relays can still route and cache objects based on unencrypted
 metadata (track names, group IDs, priorities, object properties)
-but cannot access the media content.
+but cannot access the media content. The architecture separates 
+metadata required for routing/caching from metadata that can be 
+authenticated or encrypted end-to-end. The exact protected 
+elements depend on the object security scheme and application 
+profile.
 
 Key distribution is out of scope for the MoQ specifications —
 applications use external key management systems (e.g., MLS-based
@@ -809,6 +821,11 @@ key distribution for conferencing, or out-of-band provisioning for
 streaming).
 
 ## Authorization {#authorization}
+
+In general, MOQT defines where authorization material can be 
+carried in protocol exchanges, while the semantic interpretation 
+and verification procedure depend on the selected authorization 
+scheme and the relay or publisher’s local policy. 
 
 MOQT provides a generic AUTHORIZATION TOKEN parameter that can be
 included in control messages (SUBSCRIBE, FETCH, PUBLISH,
@@ -818,7 +835,7 @@ token before forwarding content or establishing upstream
 subscriptions. Tokens can be registered with session-scoped aliases
 to avoid retransmitting large values on every message.
 
-The working group has defined two authorization schemes that operate
+The two defined authorization schemes that operate
 over this mechanism:
 
 - Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
