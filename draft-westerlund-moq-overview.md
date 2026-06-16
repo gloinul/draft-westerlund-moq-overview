@@ -360,9 +360,9 @@ topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
 streaming platform operates differently from one supporting a
 conferencing service, even though the protocol mechanics are
-identical. Moreover, eventhough relays need not parse media payload 
-formats in order to forward content, but they may still apply 
-application-aware policy based on visible metadata, naming 
+identical. Moreover, eventhough relays need not parse media payload
+formats in order to forward content, but they may still apply
+application-aware policy based on visible metadata, naming
 conventions, and authorization state.
 
 For further discussion of relay operational considerations,
@@ -477,8 +477,8 @@ Every track is identified by a Full Track Name consisting of two
 parts:
 
 Track Namespace:
-: An ordered tuple of one or more fields ( up to 32) (e.g., 
-  "example.com", "meeting123", "alice"). The namespace provides 
+: An ordered tuple of one or more fields ( up to 32) (e.g.,
+  "example.com", "meeting123", "alice"). The namespace provides
   hierarchical structure that relays use for prefix-based routing
   and subscription matching.
 
@@ -505,11 +505,11 @@ Track Properties:
   FETCH_OK).
 
 Object Properties:
-: Per-object metadata carried in object headers. MOQT defines 
-  the framework for object properties (examples include gap 
-  indicators - Prior Group ID Gap, Prior Object ID Gap, while 
-  media-specific specifications such as timestamps and frame 
-  markings are defined in LOC and MSF define additional semantics 
+: Per-object metadata carried in object headers. MOQT defines
+  the framework for object properties (examples include gap
+  indicators - Prior Group ID Gap, Prior Object ID Gap, while
+  media-specific specifications such as timestamps and frame
+  markings are defined in LOC and MSF define additional semantics
   for properties relevant to encoded audio/video samples.
 
 Immutable Properties:
@@ -562,11 +562,11 @@ MOQT runs over either native QUIC or WebTransport:
 - WebTransport: The client establishes a WebTransport session over
   HTTP/3, using an HTTPS URI derived from the moqt:// URI.
 
-MOQT can run over native QUIC or over WebTransport over HTTP/3. 
-While both provide stream multiplexing and secure transport, the 
-deployment model and some capabilities are constrained differently, 
-especially in browser-based WebTransport environments. Applications 
-should treat them as functionally similar substrates, not strictly 
+MOQT can run over native QUIC or over WebTransport over HTTP/3.
+While both provide stream multiplexing and secure transport, the
+deployment model and some capabilities are constrained differently,
+especially in browser-based WebTransport environments. Applications
+should treat them as functionally similar substrates, not strictly
 identical ones.
 
 After the transport connection is established, each endpoint opens a
@@ -809,10 +809,10 @@ The scheme:
 
 Relays can still route and cache objects based on unencrypted
 metadata (track names, group IDs, priorities, object properties)
-but cannot access the media content. The architecture separates 
-metadata required for routing/caching from metadata that can be 
-authenticated or encrypted end-to-end. The exact protected 
-elements depend on the object security scheme and application 
+but cannot access the media content. The architecture separates
+metadata required for routing/caching from metadata that can be
+authenticated or encrypted end-to-end. The exact protected
+elements depend on the object security scheme and application
 profile.
 
 Key distribution is out of scope for the MoQ specifications —
@@ -822,10 +822,10 @@ streaming).
 
 ## Authorization {#authorization}
 
-In general, MOQT defines where authorization material can be 
-carried in protocol exchanges, while the semantic interpretation 
-and verification procedure depend on the selected authorization 
-scheme and the relay or publisher’s local policy. 
+In general, MOQT defines where authorization material can be
+carried in protocol exchanges, while the semantic interpretation
+and verification procedure depend on the selected authorization
+scheme and the relay or publisher’s local policy.
 
 MOQT provides a generic AUTHORIZATION TOKEN parameter that can be
 included in control messages (SUBSCRIBE, FETCH, PUBLISH,
