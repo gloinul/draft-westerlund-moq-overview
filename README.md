@@ -1,3 +1,5 @@
+<!-- regenerate: on (set to off if you edit this file) -->
+
 # Media over QUIC Overview
 
 This is the working area for the individual Internet-Draft, "Media over QUIC Overview".
@@ -13,9 +15,8 @@ This is the working area for the individual Internet-Draft, "Media over QUIC Ove
 See the
 [guidelines for contributions](https://github.com/gloinul/draft-westerlund-moq-overview/blob/main/CONTRIBUTING.md).
 
-Contributions can be made by creating pull requests.
-The GitHub interface supports creating pull requests using the Edit (✏) button.
-
+The contributing file also has tips on how to make contributions, if you
+don't already know how to do that.
 
 ## Command Line Usage
 
