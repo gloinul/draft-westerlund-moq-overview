@@ -64,7 +64,7 @@ distribution at scale. On top of MOQT, additional specifications
 define streaming formats, media containers, and end-to-end security
 mechanisms.
 
-This document provides a high-level overview of these components protocols, how
+This document provides a high-level overview of these component protocols, how
 they relate to each other, and how they are composed to create
 interoperable applications. It is intended as an entry point for
 implementers, reviewers, and protocol designers who want to understand
