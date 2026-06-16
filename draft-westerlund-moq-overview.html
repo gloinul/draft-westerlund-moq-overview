@@ -1052,7 +1052,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund &amp; Sarker</td>
-<td class="center">Expires 17 December 2026</td>
+<td class="center">Expires 18 December 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1065,12 @@ svg {
 <dd class="internet-draft">draft-westerlund-moq-overview-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-06-15" class="published">15 June 2026</time>
+<time datetime="2026-06-16" class="published">16 June 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-12-17">17 December 2026</time></dd>
+<dd class="expires"><time datetime="2026-12-18">18 December 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1128,7 +1128,7 @@ how they are composed to create interoperable media applications.<a href="#secti
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 18 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1308,20 +1308,20 @@ how they are composed to create interoperable media applications.<a href="#secti
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Media over QUIC (MoQ) is an IETF working group producing a set of
+<p id="section-1-1">Media over QUIC (MoQ) incorporates a set of
 specifications for scalable, low-latency delivery over the Internet.
 The core output is MOQT, a publish/subscribe transport protocol built
 on QUIC <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> that uses intermediate relays to achieve
 distribution at scale. On top of MOQT, additional specifications
 define streaming formats, media containers, and end-to-end security
 mechanisms.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">This document provides a high-level overview of these components, how
+<p id="section-1-2">This document provides a high-level overview of these component protocols, how
 they relate to each other, and how they are composed to create
 interoperable applications. It is intended as an entry point for
 implementers, reviewers, and protocol designers who want to understand
 the overall system before reading the individual normative
 specifications.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">Although the working group's primary motivation is media delivery,
+<p id="section-1-3">Although the primary motivation of MoQ is media delivery,
 MOQT itself is content-agnostic — it transports opaque objects
 without knowledge of their payload. Media-specific logic (codecs,
 containers, adaptive bitrate switching) is defined in separate
@@ -1405,7 +1405,7 @@ or create new requirements. Its purpose is to:<a href="#section-1.2-1" class="pi
 topic.<a href="#section-1.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-1.2-3">The normative specifications are:<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">The covered specifications are:<a href="#section-1.2-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-1.2-4.1">
             <p id="section-1.2-4.1.1">MOQT (Media over QUIC Transport) <span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> —
@@ -1745,7 +1745,10 @@ topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
 streaming platform operates differently from one supporting a
 conferencing service, even though the protocol mechanics are
-identical.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+identical. Moreover, eventhough relays need not parse media payload
+formats in order to forward content, but they may still apply
+application-aware policy based on visible metadata, naming
+conventions, and authorization state.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
 <p id="section-3.2-6">For further discussion of relay operational considerations,
 including denial-of-service resilience, see
 <span>[<a href="#I-D.englishm-moq-relay-dos" class="cite xref">I-D.englishm-moq-relay-dos</a>]</span>.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
@@ -1903,10 +1906,10 @@ parts:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-4.2-2">
           <dt id="section-4.2-2.1">Track Namespace:</dt>
           <dd style="margin-left: 1.5em" id="section-4.2-2.2">
-            <p id="section-4.2-2.2.1">An ordered tuple of one or more fields (e.g., "example.com",
-"meeting123", "alice"). The namespace provides hierarchical
-structure that relays use for prefix-based routing and
-subscription matching.<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.2-2.2.1">An ordered tuple of one or more fields ( up to 32) (e.g.,
+"example.com", "meeting123", "alice"). The namespace provides
+hierarchical structure that relays use for prefix-based routing
+and subscription matching.<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.2-2.3">Track Name:</dt>
@@ -1942,10 +1945,12 @@ FETCH_OK).<a href="#section-4.3-2.2.1" class="pilcrow">¶</a></p>
           <dd class="break"></dd>
 <dt id="section-4.3-2.3">Object Properties:</dt>
           <dd style="margin-left: 1.5em" id="section-4.3-2.4">
-            <p id="section-4.3-2.4.1">Per-object metadata carried in object headers. Examples include
-gap indicators (Prior Group ID Gap, Prior Object ID Gap) and
-media-specific fields such as timestamps and frame markings
-(defined in <span>[<a href="#I-D.ietf-moq-loc" class="cite xref">I-D.ietf-moq-loc</a>]</span>).<a href="#section-4.3-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.3-2.4.1">Per-object metadata carried in object headers. MOQT defines
+the framework for object properties (examples include gap
+indicators - Prior Group ID Gap, Prior Object ID Gap, while
+media-specific specifications such as timestamps and frame
+markings are defined in LOC and MSF define additional semantics
+for properties relevant to encoded audio/video samples.<a href="#section-4.3-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.3-2.5">Immutable Properties:</dt>
@@ -2021,9 +2026,12 @@ communicated via Setup Options.<a href="#section-5.1-2.1.1" class="pilcrow">¶</
 HTTP/3, using an HTTPS URI derived from the moqt:// URI.<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.1-3">Both transports provide multiplexed streams, unreliable datagrams,
-and TLS 1.3 security. The choice between them depends on deployment
-constraints (e.g., browser environments require WebTransport).<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-3">MOQT can run over native QUIC or over WebTransport over HTTP/3.
+While both provide stream multiplexing and secure transport, the
+deployment model and some capabilities are constrained differently,
+especially in browser-based WebTransport environments. Applications
+should treat them as functionally similar substrates, not strictly
+identical ones.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <p id="section-5.1-4">After the transport connection is established, each endpoint opens a
 unidirectional control stream and sends a SETUP message. The SETUP
 exchange negotiates the protocol version and extensions (Setup
@@ -2210,7 +2218,7 @@ how to synchronise multiple tracks.<a href="#section-6.1-3" class="pilcrow">¶</
 <a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-msf-moqt-streaming-format" class="section-name selfRef">MSF: MOQT Streaming Format</a>
         </h3>
 <p id="section-6.2-1">The MOQT Streaming Format (MSF) <span>[<a href="#I-D.ietf-moq-msf" class="cite xref">I-D.ietf-moq-msf</a>]</span> is the primary
-streaming format defined by the MoQ working group. It uses LOC (Low
+streaming format defined for MoQ. It uses LOC (Low
 Overhead Container) <span>[<a href="#I-D.ietf-moq-loc" class="cite xref">I-D.ietf-moq-loc</a>]</span> packaging, where each
 encoded media sample (audio frame or video frame) is placed in a
 separate MOQT object.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
@@ -2372,7 +2380,11 @@ uniqueness.<a href="#section-7.2-3.4.1" class="pilcrow">¶</a></p>
         </ul>
 <p id="section-7.2-4">Relays can still route and cache objects based on unencrypted
 metadata (track names, group IDs, priorities, object properties)
-but cannot access the media content.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
+but cannot access the media content. The architecture separates
+metadata required for routing/caching from metadata that can be
+authenticated or encrypted end-to-end. The exact protected
+elements depend on the object security scheme and application
+profile.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
 <p id="section-7.2-5">Key distribution is out of scope for the MoQ specifications —
 applications use external key management systems (e.g., MLS-based
 key distribution for conferencing, or out-of-band provisioning for
@@ -2384,38 +2396,42 @@ streaming).<a href="#section-7.2-5" class="pilcrow">¶</a></p>
         <h3 id="name-authorization">
 <a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-authorization" class="section-name selfRef">Authorization</a>
         </h3>
-<p id="section-7.3-1">MOQT provides a generic AUTHORIZATION TOKEN parameter that can be
+<p id="section-7.3-1">In general, MOQT defines where authorization material can be
+carried in protocol exchanges, while the semantic interpretation
+and verification procedure depend on the selected authorization
+scheme and the relay or publisher’s local policy.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.3-2">MOQT provides a generic AUTHORIZATION TOKEN parameter that can be
 included in control messages (SUBSCRIBE, FETCH, PUBLISH,
 PUBLISH_NAMESPACE, and others). Both publishers and subscribers use
 this single mechanism to present credentials; relays verify the
 token before forwarding content or establishing upstream
 subscriptions. Tokens can be registered with session-scoped aliases
-to avoid retransmitting large values on every message.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
-<p id="section-7.3-2">The working group has defined two authorization schemes that operate
-over this mechanism:<a href="#section-7.3-2" class="pilcrow">¶</a></p>
+to avoid retransmitting large values on every message.<a href="#section-7.3-2" class="pilcrow">¶</a></p>
+<p id="section-7.3-3">The two defined authorization schemes that operate
+over this mechanism:<a href="#section-7.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.3-3.1">
-            <p id="section-7.3-3.1.1">Privacy Pass Authentication <span>[<a href="#I-D.ietf-moq-privacy-pass-auth" class="cite xref">I-D.ietf-moq-privacy-pass-auth</a>]</span> —
+<li class="normal" id="section-7.3-4.1">
+            <p id="section-7.3-4.1.1">Privacy Pass Authentication <span>[<a href="#I-D.ietf-moq-privacy-pass-auth" class="cite xref">I-D.ietf-moq-privacy-pass-auth</a>]</span> —
 provides privacy-preserving, unlinkable authorization using
 Privacy Pass tokens. It supports fine-grained access control
 through namespace and track name matching rules, and defines
 mechanisms for continuous re-authorization over long-lived
-sessions using batched tokens or a reverse issuance flow.<a href="#section-7.3-3.1.1" class="pilcrow">¶</a></p>
+sessions using batched tokens or a reverse issuance flow.<a href="#section-7.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.3-3.2">
-            <p id="section-7.3-3.2.1">Common Access Tokens (C4M) <span>[<a href="#I-D.ietf-moq-c4m" class="cite xref">I-D.ietf-moq-c4m</a>]</span> — provides a
+          <li class="normal" id="section-7.3-4.2">
+            <p id="section-7.3-4.2.1">Common Access Tokens (C4M) <span>[<a href="#I-D.ietf-moq-c4m" class="cite xref">I-D.ietf-moq-c4m</a>]</span> — provides a
 bearer token scheme using structured tokens with claims that
 express authorization scope. C4M follows a model familiar from
-HTTP-based systems.<a href="#section-7.3-3.2.1" class="pilcrow">¶</a></p>
+HTTP-based systems.<a href="#section-7.3-4.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-7.3-4">The choice between schemes depends on application requirements:
+<p id="section-7.3-5">The choice between schemes depends on application requirements:
 Privacy Pass prioritises subscriber anonymity, while C4M offers
 simpler integration for deployments with existing identity
-infrastructure.<a href="#section-7.3-4" class="pilcrow">¶</a></p>
-<p id="section-7.3-5">The streaming format catalog can signal authorization requirements
+infrastructure.<a href="#section-7.3-5" class="pilcrow">¶</a></p>
+<p id="section-7.3-6">The streaming format catalog can signal authorization requirements
 per-track (via the authInfo field in MSF), allowing subscribers to
-discover what credentials they need before attempting to subscribe.<a href="#section-7.3-5" class="pilcrow">¶</a></p>
+discover what credentials they need before attempting to subscribe.<a href="#section-7.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="privacy">
