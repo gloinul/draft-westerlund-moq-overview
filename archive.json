@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-14T02:34:46.749676+00:00",
+  "timestamp": "2026-06-16T02:42:26.085969+00:00",
   "repo": "gloinul/draft-westerlund-moq-overview",
   "labels": [
     {
@@ -141,24 +141,26 @@
       "id": "PR_kwDONfywY87l3s4i",
       "title": "Complete overhaul of the Draft",
       "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/3",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "gloinul",
       "authorAssociation": "OWNER",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2026-06-12T18:00:26Z",
-      "updatedAt": "2026-06-12T18:00:26Z",
+      "updatedAt": "2026-06-15T09:02:07Z",
       "baseRepository": "gloinul/draft-westerlund-moq-overview",
       "baseRefName": "main",
       "baseRefOid": "af914699b3796afeb7277e4a9a561f150e3b2fd2",
       "headRepository": "gloinul/draft-westerlund-moq-overview",
       "headRefName": "restructure",
       "headRefOid": "540703c4df52ca36dbdff0ecd0ba913117489f24",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-06-15T09:02:07Z",
+      "mergedAt": "2026-06-15T09:02:07Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "c9f8857138fdfb5bd39c816b1cfd80b258644627"
+      },
       "comments": [],
       "reviews": []
     }
