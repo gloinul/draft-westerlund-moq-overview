@@ -1740,7 +1740,12 @@ interpreting or modifying them. This enables end-to-end encryption
 where relays cannot access media content, while still performing
 their routing and caching functions based on object metadata
 (track names, group IDs, priorities, properties).<a href="#section-3.2-4" class="pilcrow">¶</a></p>
-<p id="section-3.2-5">However, relays are not necessarily application-agnostic when it
+<p id="section-3.2-5">Relays are enforcement points for access and authorization. In many
+deployments that have any restriction on access of the content the
+relay is expected to be the node that receives proof of authorization
+and will be responsible to verify and periodically re-verify this
+proof before delivering content.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">Relays are also not necessarily application-agnostic when it
 comes to deployment and operation. The configuration of relay
 topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
@@ -1749,10 +1754,10 @@ conferencing service, even though the protocol mechanics are
 identical. Moreover, eventhough relays need not parse media payload
 formats in order to forward content, but they may still apply
 application-aware policy based on visible metadata, naming
-conventions, and authorization state.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
-<p id="section-3.2-6">For further discussion of relay operational considerations,
+conventions, and authorization state.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<p id="section-3.2-7">For further discussion of relay operational considerations,
 including denial-of-service resilience, see
-<span>[<a href="#I-D.englishm-moq-relay-dos" class="cite xref">I-D.englishm-moq-relay-dos</a>]</span>.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<span>[<a href="#I-D.englishm-moq-relay-dos" class="cite xref">I-D.englishm-moq-relay-dos</a>]</span>.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="topologies">
