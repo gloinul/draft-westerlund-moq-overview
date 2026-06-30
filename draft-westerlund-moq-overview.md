@@ -515,10 +515,10 @@ Object Properties:
   for properties relevant to encoded audio/video samples.
 
 Immutable Properties:
-: A special container within either track or object properties
-  whose contents cannot be modified or removed by relays. Immutable
-  Properties are used for end-to-end authenticated metadata that
-  must survive relay forwarding unchanged.
+: A special container within either track or object properties whose
+  contents must not be modified or removed by relays. Properties
+  marked as Immutable so they can be end-to-end authenticated and thus
+  verified as not being changed or removed by any relay.
 
 Properties are registered in IANA registries and use a Key-Value-Pair
 encoding. Relays that do not understand a property must forward it
