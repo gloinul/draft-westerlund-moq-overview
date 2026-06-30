@@ -572,9 +572,10 @@ overview of its key mechanisms.
 
 MOQT runs over either native QUIC or WebTransport:
 
-- Native QUIC: The client connects using ALPN "moqt" and identifies
-  the server using a "moqt://" URI. The authority and path are
-  communicated via Setup Options.
+- Native QUIC: The client connects using the TLS
+  Application-Layer Protocol Negotiation (ALPN) identifier "moqt"
+  and identifies the server using a "moqt://" URI. The authority
+  and path are communicated via Setup Options.
 - WebTransport: The client establishes a WebTransport session over
   HTTP/3, using an HTTPS URI derived from the moqt:// URI.
 
@@ -649,7 +650,9 @@ entirely. Two timeout mechanisms support controlled data loss:
 - Object Delivery Timeout: If an object cannot be sent within this
   duration after its first byte was produced, it is discarded.
 - Subgroup Delivery Timeout: If a completed subgroup's data is not
-  fully acknowledged within this duration, the stream is reset.
+  fully acknowledged within this duration, the stream is reset —
+  meaning any undelivered data on that stream is abandoned and will
+  not be retransmitted.
 
 Objects can be sent on QUIC streams (reliable, in-order within the
 stream) or as QUIC datagrams (unreliable, low-latency). The choice
@@ -675,9 +678,12 @@ Properties:
   relays, unlike Message Parameters. Properties use IANA-registered
   type codes. Unknown properties must be forwarded unchanged.
 
-GREASE:
-: Reserved code points in all registries ensure implementations
-  correctly handle unknown values without closing sessions.
+GREASE (Generate Random Extensions And Sustain Extensibility):
+: Reserved code points that implementations may send to exercise
+  their peers' handling of unknown values. This ensures that
+  deployed software does not break when new extensions are
+  introduced, because every implementation must already tolerate
+  unrecognised code points.
 
 GOAWAY supports graceful session migration and can reduce disruption
 during relay maintenance or replacement, but continuity depends on
@@ -713,7 +719,11 @@ The MOQT Streaming Format (MSF) {{I-D.ietf-moq-msf}} is the primary
 streaming format defined for MoQ. It uses LOC (Low
 Overhead Container) {{I-D.ietf-moq-loc}} packaging, where each
 encoded media sample (audio frame or video frame) is placed in a
-separate MOQT object.
+separate MOQT object. This one-sample-per-object mapping allows
+the transport to make independent delivery decisions for each
+frame — for example, prioritising base-layer video frames over
+enhancement layers, or dropping an expired frame without affecting
+the delivery of subsequent frames.
 
 MSF defines:
 
@@ -750,8 +760,10 @@ workflows that use ISO-BMFF containers and existing DRM systems.
 
 Key differences from base MSF:
 
-- Objects contain CMAF Chunks (moof+mdat boxes) rather than raw
-  codec samples.
+- Objects contain CMAF Chunks rather than raw codec samples. A
+  CMAF Chunk is the elementary media segment structure used by
+  ISO-BMFF-based streaming (the container format behind DASH and
+  HLS fMP4), consisting of metadata and media data boxes.
 - Initialization segments (CMAF Headers) are carried in the catalog
   as base64-encoded inline data.
 - Content protection uses Common Encryption (CENC) with commercial
@@ -819,9 +831,12 @@ The scheme:
 - Encrypts the object payload and optional encrypted properties.
 - Authenticates the group ID, object ID, Full Track Name, and
   immutable properties.
-- Derives per-track keys from a shared base key using HKDF.
-- Forms nonces from the group ID and object ID, guaranteeing
-  uniqueness.
+- Derives per-track keys from a shared base key using HKDF (a
+  standard key derivation function that deterministically produces
+  cryptographic keys from input material).
+- Forms a unique nonce (a value used exactly once) for each object
+  from the group ID and object ID, ensuring that no two objects
+  are encrypted with the same parameters.
 
 Relays can still route and cache objects based on unencrypted
 metadata (track names, group IDs, priorities, object properties)
@@ -859,7 +874,9 @@ operate over this mechanism:
   Privacy Pass tokens. It supports fine-grained access control
   through namespace and track name matching rules, and defines
   mechanisms for continuous re-authorization over long-lived
-  sessions using batched tokens or a reverse issuance flow.
+  sessions — either by obtaining multiple tokens in advance
+  (batched issuance) or by exchanging a validated token for fresh
+  ones directly with the relay (reverse issuance flow).
 
 - Common Access Tokens (C4M) {{I-D.ietf-moq-c4m}} — provides a
   bearer token scheme using structured tokens with claims that
@@ -918,7 +935,9 @@ Defining a MoQ application requires decisions in each of the
 following areas:
 
 Transport version:
-: Which MOQT version (ALPN value) the application requires. This
+: Which MOQT version the application requires, as identified by
+  the protocol's ALPN string (the identifier used during TLS
+  connection setup to select the application protocol). This
   determines the available protocol features.
 
 Streaming format and catalog:
