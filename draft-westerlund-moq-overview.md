@@ -58,12 +58,13 @@ how they are composed to create interoperable media applications.
 
 # Introduction {#introduction}
 
-Media over QUIC (MoQ) incorporates a set of
-specifications for scalable, low-latency delivery over the Internet.
-The core output is MOQT, a publish/subscribe transport protocol built
-on QUIC {{RFC9000}} that uses intermediate relays to achieve
-distribution at scale. On top of MOQT, additional specifications
-define streaming formats, media containers, and end-to-end security
+Media over QUIC (MoQ) is an IETF working group that produces a
+suite of protocol specifications for scalable, low-latency delivery
+over the Internet. The central specification is the MoQ Transport
+protocol (MOQT), a publish/subscribe protocol built on QUIC
+{{RFC9000}} that uses intermediate relays to achieve distribution
+at scale. Additional specifications build on MOQT to define
+streaming formats, media containers, and end-to-end security
 mechanisms.
 
 This document provides a high-level overview of these component protocols, how
@@ -682,8 +683,7 @@ GREASE (Generate Random Extensions And Sustain Extensibility):
 : Reserved code points that implementations may send to exercise
   their peers' handling of unknown values. This ensures that
   deployed software does not break when new extensions are
-  introduced, because every implementation must already tolerate
-  unrecognised code points.
+  introduced.
 
 GOAWAY supports graceful session migration and can reduce disruption
 during relay maintenance or replacement, but continuity depends on
