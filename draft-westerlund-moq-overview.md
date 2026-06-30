@@ -147,7 +147,7 @@ The covered specifications are:
 - CMSF (CMAF-compliant MSF) {{I-D.ietf-moq-cmsf}} — an extension
   of MSF for CMAF/ISO-BMFF packaged media.
 - MoQ Secure Objects {{I-D.ietf-moq-secure-objects}} — end-to-end
-  authenticated encryption for media objects.
+  authenticated encryption for content objects.
 - Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
   privacy-preserving token-based authorization.
 - Common Access Tokens for MoQ (C4M) {{I-D.ietf-moq-c4m}} —
@@ -233,9 +233,9 @@ content that is delivered through one or more relays to a potentially
 large number of end subscribers.
 
 ~~~
- Original                                         End
+ Original                                            End
  Publisher --> Relay --> Relay --> ... --> Relay --> Subscribers
-                                                   (many)
+                                                     (many)
 ~~~
 
 Key characteristics:
@@ -385,7 +385,8 @@ MOQT supports several deployment topologies:
 
 Point-to-point:
 : A publisher connects directly to a subscriber with no
-  intermediate relay. Suitable for simple scenarios or testing.
+  intermediate relay. Suitable for contribution ingest,
+  AI produced dissemination,  or testing.
 
 ~~~
  Publisher <--> Subscriber
@@ -541,8 +542,8 @@ unchanged.
 
 ## Object Immutability and Cacheability {#immutability}
 
-A fundamental property of MOQT objects is immutability: once an
-object is published, its payload must never change. Two objects with
+A fundamental property of MOQT objects is immutability: once an object
+is published, its payload must never change. Two received objects with
 the same Full Track Name, group ID, and object ID must contain
 identical bytes.
 
@@ -659,6 +660,15 @@ Objects can be sent on QUIC streams (reliable, in-order within the
 stream) or as QUIC datagrams (unreliable, low-latency). The choice
 is the Object Forwarding Preference, set per-object by the original
 publisher.
+
+Client side Adaptive Bitrate (ABR) is possible by either ending a
+subscription and replace it with another track that is another
+represenation at another bit-rate than the previous one. Steering
+these changes to be done at the next group boundary.
+
+The WG is working on sender side ABR where the publisher uses
+its understanding of the congestion situation to select the
+set of tracks to be published to the subscriber.
 
 ## Extensibility and Session Management {#extensibility}
 
