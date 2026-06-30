@@ -156,8 +156,9 @@ The covered specifications are:
 
 ## Terminology {#terminology}
 
-This document uses the following terms. Definitions are consistent
-with {{I-D.ietf-moq-transport}}.
+This document uses the following terms. Definitions attempt to be
+consistent with {{I-D.ietf-moq-transport}} but in case of discrepency
+rely on MOQT specification.
 
 Client:
 : The party initiating a Transport Session.
@@ -441,7 +442,7 @@ subscriptions.
 MOQT defines a hierarchical data model for organising media content.
 Understanding this model is essential to working with any part of
 the MoQ protocol suite. The data model is defined in Section 2 of
-{{I-D.ietf-moq-transport}}.
+{{I-D.ietf-moq-transport}} and summarized below for your convinence.
 
 ## Hierarchy {#hierarchy}
 
