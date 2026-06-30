@@ -848,8 +848,8 @@ Table of Contents
 
    Key distribution is out of scope for the MoQ specifications —
    applications use external key management systems (e.g., MLS-based key
-   distribution for conferencing [RFC9420], or out-of-band provisioning
-   for streaming).
+   distribution for conferencing [RFC9750],[RFC9420], or out-of-band
+   provisioning for streaming).
 
 7.3.  Authorization
 
@@ -1071,6 +1071,11 @@ Table of Contents
               Omara, E., and K. Cohn-Gordon, "The Messaging Layer
               Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
               July 2023, <https://www.rfc-editor.org/info/rfc9420>.
+
+   [RFC9750]  Beurdouche, B., Rescorla, E., Omara, E., Inguva, S., and
+              A. Duric, "The Messaging Layer Security (MLS)
+              Architecture", RFC 9750, DOI 10.17487/RFC9750, April 2025,
+              <https://www.rfc-editor.org/info/rfc9750>.
 
    [I-D.ietf-moq-transport]
               Nandakumar, S., Vasiliev, V., Swett, I., and A. Frindell,
