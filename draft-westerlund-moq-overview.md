@@ -157,8 +157,8 @@ The covered specifications are:
 ## Terminology {#terminology}
 
 This document uses the following terms. Definitions attempt to be
-consistent with {{I-D.ietf-moq-transport}} but in case of discrepency
-rely on MOQT specification.
+consistent with {{I-D.ietf-moq-transport}} but in case of discrepancy
+rely on the MOQT specification.
 
 Client:
 : The party initiating a Transport Session.
@@ -369,8 +369,8 @@ topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
 streaming platform operates differently from one supporting a
 conferencing service, even though the protocol mechanics are
-identical. Moreover, eventhough relays need not parse media payload
-formats in order to forward content, but they may still apply
+identical. Moreover, even though relays need not parse media payload
+formats in order to forward content, they may still apply
 application-aware policy based on visible metadata, naming
 conventions, and authorization state.
 
@@ -442,7 +442,7 @@ subscriptions.
 MOQT defines a hierarchical data model for organising media content.
 Understanding this model is essential to working with any part of
 the MoQ protocol suite. The data model is defined in Section 2 of
-{{I-D.ietf-moq-transport}} and summarized below for your convinence.
+{{I-D.ietf-moq-transport}} and summarised below for convenience.
 
 ## Hierarchy {#hierarchy}
 
@@ -515,17 +515,16 @@ Track Properties:
 
 Object Properties:
 : Per-object metadata carried in object headers. MOQT defines
-  the framework for object properties (examples include gap
-  indicators - Prior Group ID Gap, Prior Object ID Gap, while
-  media-specific specifications such as timestamps and frame
-  markings are defined in LOC and MSF define additional semantics
-  for properties relevant to encoded audio/video samples.
+  the framework for object properties, including gap indicators
+  (Prior Group ID Gap, Prior Object ID Gap). Media-specific
+  properties such as timestamps and frame markings are defined by
+  LOC and MSF for use with encoded audio/video samples.
 
 Immutable Properties:
 : A special container within either track or object properties whose
-  contents must not be modified or removed by relays. Properties
-  marked as Immutable so they can be end-to-end authenticated and thus
-  verified as not being changed or removed by any relay.
+  contents must not be modified or removed by relays. Immutable
+  Properties enable end-to-end authentication, allowing subscribers
+  to verify that these values have not been changed by any relay.
 
 Properties are registered in IANA registries and use a Key-Value-Pair
 encoding. Relays that do not understand a property must forward it
@@ -571,12 +570,11 @@ MOQT runs over either native QUIC or WebTransport:
 - WebTransport: The client establishes a WebTransport session over
   HTTP/3, using an HTTPS URI derived from the moqt:// URI.
 
-MOQT can run over native QUIC or over WebTransport over HTTP/3.
-While both provide stream multiplexing and secure transport, the
-deployment model and some capabilities are constrained differently,
-especially in browser-based WebTransport environments. Applications
-should treat them as functionally similar substrates, not strictly
-identical ones.
+Both provide stream multiplexing and secure transport, though the
+deployment model differs — particularly in browser-based environments
+where only WebTransport is available. Applications should treat them
+as functionally similar substrates with some environment-specific
+constraints.
 
 After the transport connection is established, each endpoint opens a
 unidirectional control stream and sends a SETUP message. The SETUP
@@ -662,9 +660,9 @@ Message Parameters:
   peer-to-peer and are not forwarded by relays.
 
 Properties:
-: Per-track and per-object metadata that IS forwarded and cached by
-  relays. Properties use IANA-registered type codes. Unknown
-  properties must be forwarded unchanged.
+: Per-track and per-object metadata that is forwarded and cached by
+  relays, unlike Message Parameters. Properties use IANA-registered
+  type codes. Unknown properties must be forwarded unchanged.
 
 GREASE:
 : Reserved code points in all registries ensure implementations
@@ -794,7 +792,7 @@ the underlying connection. This provides:
 - Server authentication (and optionally mutual authentication).
 - Protection against on-path attackers between adjacent nodes.
 
-However, hop-by-hop security does NOT protect content from relays.
+However, hop-by-hop security does not protect content from relays.
 A relay terminates the TLS session and has access to all MOQT
 message contents, including object payloads, unless additional
 end-to-end protection is applied.
@@ -842,8 +840,8 @@ token before forwarding content or establishing upstream
 subscriptions. Tokens can be registered with session-scoped aliases
 to avoid retransmitting large values on every message.
 
-The two defined authorization schemes that operate
-over this mechanism:
+The working group has defined two authorization schemes that
+operate over this mechanism:
 
 - Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
   provides privacy-preserving, unlinkable authorization using
