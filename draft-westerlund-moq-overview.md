@@ -431,10 +431,11 @@ manage subscriptions on each session independently and can
 aggregate multiple downstream subscriptions into a single upstream
 subscription.
 
-MOQT's session migration mechanism (GOAWAY) allows relays to be
-restarted or replaced without disrupting end-to-end delivery:
-subscribers re-establish sessions to a new relay and migrate their
-subscriptions.
+MOQT supports graceful session migration: a relay that needs to
+shut down sends a GOAWAY message directing its peers to reconnect
+to a different server. The peers then establish new sessions and
+re-issue their subscriptions, allowing relay maintenance or
+replacement without disrupting end-to-end delivery.
 
 
 # Data Model {#data-model}
@@ -496,15 +497,20 @@ Track Name:
   namespace (e.g., "video-hd", "audio", "catalog").
 
 The combination of namespace and track name is unique within a
-given scope (the set of servers sharing a common connection URI
-authority and path). This uniqueness guarantee means that a Full
-Track Name can serve as a cache key.
+given scope. A scope is defined by the server or set of servers
+that a client connects to — specifically, those sharing the same
+host and path in the connection URI. Within a scope, no two
+distinct tracks can have the same Full Track Name, which means it
+can serve as a cache key at relays.
 
 ## Properties {#properties}
 
 Tracks and objects can carry additional metadata called Properties.
 Properties are visible to relays and can influence how content is
-distributed.
+distributed. There are two scopes of properties — track-wide and
+per-object — and within either scope, individual properties can
+optionally be marked as immutable to support end-to-end
+authentication.
 
 Track Properties:
 : Metadata associated with an entire track. Examples include
@@ -521,10 +527,11 @@ Object Properties:
   LOC and MSF for use with encoded audio/video samples.
 
 Immutable Properties:
-: A special container within either track or object properties whose
-  contents must not be modified or removed by relays. Immutable
-  Properties enable end-to-end authentication, allowing subscribers
-  to verify that these values have not been changed by any relay.
+: Either track or object properties may be placed inside an
+  Immutable Properties container. Once set by the original
+  publisher, these cannot be modified or removed by relays. This
+  enables end-to-end authentication: subscribers can verify that
+  immutable values have not been altered in transit.
 
 Properties are registered in IANA registries and use a Key-Value-Pair
 encoding. Relays that do not understand a property must forward it
@@ -600,10 +607,13 @@ PUBLISH:
 
 FETCH:
 : A subscriber requests a specific range of previously published
-  objects. Unlike SUBSCRIBE, which delivers future objects, FETCH
-  retrieves historical data. A Joining Fetch can be associated with
-  a subscription to fill the gap between stored history and the
-  live edge.
+  objects. Unlike SUBSCRIBE, which delivers objects as they are
+  produced going forward, FETCH retrieves objects that already
+  exist. A subscriber that joins a track mid-stream typically
+  needs both: a SUBSCRIBE to receive new objects, and a FETCH
+  (called a Joining Fetch) to retrieve the recent objects needed
+  to start decoding — for example, the beginning of the current
+  video group of pictures.
 
 Namespace Discovery:
 : Publishers advertise available namespaces via PUBLISH_NAMESPACE.
