@@ -1,0 +1,2811 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Media over QUIC Overview</title>
+<meta content="Magnus Westerlund" name="author">
+<meta content="Zaheduzzaman Sarker" name="author">
+<meta content="
+       This document provides a high-level overview of the Media over QUIC
+(MoQ) protocol suite. It describes the architecture, data model,
+transport protocol, streaming formats, and security mechanisms that
+together enable scalable low-latency media delivery over the Internet.
+The document explains how these components relate to each other and
+how they are composed to create interoperable media applications. 
+    " name="description">
+<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="draft-westerlund-moq-overview-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.34.0
+    Python 3.14.5
+    ConfigArgParse 1.7.5
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.10.0
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.33.1
+    wcwidth 0.8.1
+-->
+<link href="draft-westerlund-moq-overview.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
+}
+svg {
+  display: block;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
+}
+.alignCenter {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+      float: none;
+    }
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
+}
+.iref + a[href].internal {
+  color: var(--text-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
+  }
+  @media print {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+  & .prepared {
+    float: right;
+  }
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
+  }
+}
+
+/* Comments */
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
+      }
+    }
+    & a.toplink {
+      float: right;
+    }
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
+    }
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc {
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">MoQ Overview</td>
+<td class="right">June 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Westerlund &amp; Sarker</td>
+<td class="center">Expires 1 January 2027</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">moq</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-westerlund-moq-overview-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-06-30" class="published">30 June 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2027-01-01">1 January 2027</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">M. Westerlund</div>
+<div class="org">Ericsson</div>
+</div>
+<div class="author">
+      <div class="author-name">Z. Sarker</div>
+<div class="org">Nokia</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Media over QUIC Overview</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document provides a high-level overview of the Media over QUIC
+(MoQ) protocol suite. It describes the architecture, data model,
+transport protocol, streaming formats, and security mechanisms that
+together enable scalable low-latency media delivery over the Internet.
+The document explains how these components relate to each other and
+how they are composed to create interoperable media applications.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-westerlund-moq-overview/">https://datatracker.ietf.org/doc/draft-westerlund-moq-overview/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        Media over QUIC (MOQ) Working Group mailing list (<span><a href="mailto:moq@ietf.org">mailto:moq@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/moq/">https://mailarchive.ietf.org/arch/browse/moq/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/moq/">https://www.ietf.org/mailman/listinfo/moq/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/https://github.com/gloinul/draft-westerlund-moq-overview">https://github.com/https://github.com/gloinul/draft-westerlund-moq-overview</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 1 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-motivation" class="internal xref">Motivation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-document-scope" class="internal xref">Document Scope</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-use-cases" class="internal xref">Use Cases</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-live-streaming-media-delive" class="internal xref">Live Streaming Media Delivery</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-real-time-conferencing" class="internal xref">Real-Time Conferencing</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-content-contribution-and-pr" class="internal xref">Content Contribution and Primary Distribution</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-architecture-and-nodes" class="internal xref">Architecture and Nodes</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-roles" class="internal xref">Roles</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-relays" class="internal xref">Relays</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-deployment-topologies" class="internal xref">Deployment Topologies</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-data-model" class="internal xref">Data Model</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-hierarchy" class="internal xref">Hierarchy</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-track-naming" class="internal xref">Track Naming</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-properties" class="internal xref">Properties</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-object-immutability-and-cac" class="internal xref">Object Immutability and Cacheability</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-moqt-the-transport-protocol" class="internal xref">MOQT: The Transport Protocol</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-session-establishment" class="internal xref">Session Establishment</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-publishing-and-subscribing" class="internal xref">Publishing and Subscribing</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-priorities-and-delivery" class="internal xref">Priorities and Delivery</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-extensibility-and-session-m" class="internal xref">Extensibility and Session Management</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-streaming-formats" class="internal xref">Streaming Formats</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-role-of-a-streaming-format" class="internal xref">Role of a Streaming Format</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-msf-moqt-streaming-format" class="internal xref">MSF: MOQT Streaming Format</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-cmsf-cmaf-compliant-streami" class="internal xref">CMSF: CMAF-Compliant Streaming Format</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-layering" class="internal xref">Layering</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-security-architecture" class="internal xref">Security Architecture</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-hop-by-hop-security" class="internal xref">Hop-by-Hop Security</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-end-to-end-object-encryptio" class="internal xref">End-to-End Object Encryption</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-authorization" class="internal xref">Authorization</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-privacy-considerations" class="internal xref">Privacy Considerations</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-defining-a-moq-application" class="internal xref">Defining a MoQ Application</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-application-design-choices" class="internal xref">Application Design Choices</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-existing-application-defini" class="internal xref">Existing Application Definitions</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-reading-guide" class="internal xref">Reading Guide</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-contributors" class="internal xref">Contributors</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">Media over QUIC (MoQ) incorporates a set of
+specifications for scalable, low-latency delivery over the Internet.
+The core output is MOQT, a publish/subscribe transport protocol built
+on QUIC <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> that uses intermediate relays to achieve
+distribution at scale. On top of MOQT, additional specifications
+define streaming formats, media containers, and end-to-end security
+mechanisms.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document provides a high-level overview of these component protocols, how
+they relate to each other, and how they are composed to create
+interoperable applications. It is intended as an entry point for
+implementers, reviewers, and protocol designers who want to understand
+the overall system before reading the individual normative
+specifications.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Although the primary motivation of MoQ is media delivery,
+MOQT itself is content-agnostic — it transports opaque objects
+without knowledge of their payload. Media-specific logic (codecs,
+containers, adaptive bitrate switching) is defined in separate
+streaming format specifications that layer on top of the transport.
+This separation means the protocol can serve other applications that
+benefit from the same publish/subscribe, relay-based delivery model.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<div id="motivation">
+<section id="section-1.1">
+        <h3 id="name-motivation">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-motivation" class="section-name selfRef">Motivation</a>
+        </h3>
+<p id="section-1.1-1">Today's media delivery landscape uses separate protocols for different
+stages of the pipeline. Content is typically ingested using protocols
+like RTMP, then repackaged at origin servers for distribution via
+HTTP-based protocols such as HLS or DASH. This separation introduces
+repackaging overhead, limits end-to-end latency, and creates
+complexity at the boundaries between protocol domains.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">MoQ addresses this by providing a single protocol that can carry media
+from original publisher to end subscriber, including through
+intermediate relay nodes. The design is driven by four goals:<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-1.1-3">
+          <dt id="section-1.1-3.1">Latency:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.1-3.2">
+            <p id="section-1.1-3.2.1">TCP-based protocols suffer from head-of-line blocking and are slow
+to respond to congestion. MoQ leverages QUIC's multiplexed streams
+and partial reliability to minimise queuing latency and react
+quickly to changing network conditions.<a href="#section-1.1-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.1-3.3">Leveraging QUIC:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.1-3.4">
+            <p id="section-1.1-3.4.1">QUIC provides parallel streams with independent loss recovery,
+unreliable datagrams, stream priorities, and flow control. MoQ
+maps its data model onto these features to achieve flexible
+trade-offs between latency and reliability.<a href="#section-1.1-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.1-3.5">Convergence:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.1-3.6">
+            <p id="section-1.1-3.6.1">A single protocol from contribution through distribution eliminates
+the need for intermediate repackaging. The same MoQ objects
+produced by an encoder can be delivered to end subscribers without
+transformation at relay nodes.<a href="#section-1.1-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.1-3.7">Relays:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.1-3.8">
+            <p id="section-1.1-3.8.1">Scalable media delivery requires intermediaries that can cache and
+fan out content. MoQ treats relays as first-class protocol
+participants: object metadata is structured so that relays can
+route, prioritise, and cache content without accessing the media
+payload itself.<a href="#section-1.1-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-1.1-4">The resulting protocol is a general-purpose pub/sub delivery layer.
+The media-specific aspects — how audio and video samples are
+packaged, how tracks are described in a catalog, how adaptive
+bitrate switching works — are defined by separate streaming format
+specifications that build on MOQT. Applications outside media
+delivery can use MOQT directly with their own object formats,
+without adopting any of the media-specific layers.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="scope">
+<section id="section-1.2">
+        <h3 id="name-document-scope">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-document-scope" class="section-name selfRef">Document Scope</a>
+        </h3>
+<p id="section-1.2-1">This document is informational. It does not define protocol behaviour
+or create new requirements. Its purpose is to:<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2-2.1">
+            <p id="section-1.2-2.1.1">Orient readers to the MoQ architecture and its components.<a href="#section-1.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-2.2">
+            <p id="section-1.2-2.2.1">Explain how the components relate to each other.<a href="#section-1.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-2.3">
+            <p id="section-1.2-2.3.1">Point readers to the relevant normative specification for each
+topic.<a href="#section-1.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-1.2-3">The covered specifications are:<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2-4.1">
+            <p id="section-1.2-4.1.1">MOQT (Media over QUIC Transport) <span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> —
+the publish/subscribe transport protocol.<a href="#section-1.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.2">
+            <p id="section-1.2-4.2.1">MSF (MOQT Streaming Format) <span>[<a href="#I-D.ietf-moq-msf" class="cite xref">I-D.ietf-moq-msf</a>]</span> — a streaming
+format defining media packaging, catalog, and timeline.<a href="#section-1.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.3">
+            <p id="section-1.2-4.3.1">CMSF (CMAF-compliant MSF) <span>[<a href="#I-D.ietf-moq-cmsf" class="cite xref">I-D.ietf-moq-cmsf</a>]</span> — an extension
+of MSF for CMAF/ISO-BMFF packaged media.<a href="#section-1.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.4">
+            <p id="section-1.2-4.4.1">MoQ Secure Objects <span>[<a href="#I-D.ietf-moq-secure-objects" class="cite xref">I-D.ietf-moq-secure-objects</a>]</span> — end-to-end
+authenticated encryption for media objects.<a href="#section-1.2-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.5">
+            <p id="section-1.2-4.5.1">Privacy Pass Authentication <span>[<a href="#I-D.ietf-moq-privacy-pass-auth" class="cite xref">I-D.ietf-moq-privacy-pass-auth</a>]</span> —
+privacy-preserving token-based authorization.<a href="#section-1.2-4.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.6">
+            <p id="section-1.2-4.6.1">Common Access Tokens for MoQ (C4M) <span>[<a href="#I-D.ietf-moq-c4m" class="cite xref">I-D.ietf-moq-c4m</a>]</span> —
+bearer token authorization scheme.<a href="#section-1.2-4.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.7">
+            <p id="section-1.2-4.7.1">LOC (Low Overhead Container) <span>[<a href="#I-D.ietf-moq-loc" class="cite xref">I-D.ietf-moq-loc</a>]</span> — a minimal
+media container format.<a href="#section-1.2-4.7.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="terminology">
+<section id="section-1.3">
+        <h3 id="name-terminology">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<p id="section-1.3-1">This document uses the following terms. Definitions attempt to be
+consistent with <span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> but in case of discrepancy
+rely on the MOQT specification.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-1.3-2">
+          <dt id="section-1.3-2.1">Client:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.2">
+            <p id="section-1.3-2.2.1">The party initiating a Transport Session.<a href="#section-1.3-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.3">Server:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.4">
+            <p id="section-1.3-2.4.1">The party accepting an incoming Transport Session.<a href="#section-1.3-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.5">Publisher:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.6">
+            <p id="section-1.3-2.6.1">An endpoint that handles subscriptions by sending objects from a
+track.<a href="#section-1.3-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.7">Subscriber:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.8">
+            <p id="section-1.3-2.8.1">An endpoint that subscribes to and receives tracks.<a href="#section-1.3-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.9">Original Publisher:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.10">
+            <p id="section-1.3-2.10.1">The initial publisher of a given track — the entity that creates
+the media content.<a href="#section-1.3-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.11">End Subscriber:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.12">
+            <p id="section-1.3-2.12.1">A subscriber that consumes the content and does not forward it to
+other subscribers.<a href="#section-1.3-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.13">Relay:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.14">
+            <p id="section-1.3-2.14.1">An entity that is both a publisher and a subscriber, forwarding
+content between other endpoints. Relays are neither the original
+publisher nor the end subscriber.<a href="#section-1.3-2.14.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.15">Track:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.16">
+            <p id="section-1.3-2.16.1">A time-ordered sequence of groups, identified by a Full Track
+Name. A track is the unit of subscription.<a href="#section-1.3-2.16.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.17">Group:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.18">
+            <p id="section-1.3-2.18.1">A collection of objects within a track that forms a join point.
+Groups are independently useful — objects within a group should
+not depend on objects in other groups.<a href="#section-1.3-2.18.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.19">Object:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.20">
+            <p id="section-1.3-2.20.1">The smallest addressable data unit in MoQ. An object is an
+immutable sequence of bytes identified by its track, group ID,
+and object ID.<a href="#section-1.3-2.20.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.21">Subgroup:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.22">
+            <p id="section-1.3-2.22.1">A sequence of objects within a group that share a QUIC stream.
+Objects in a subgroup have consistent priority and dependency
+relationships.<a href="#section-1.3-2.22.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.3-2.23">Transport Session:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.3-2.24">
+            <p id="section-1.3-2.24.1">A QUIC connection or WebTransport session over which MOQT
+operates.<a href="#section-1.3-2.24.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="use-cases">
+<section id="section-2">
+      <h2 id="name-use-cases">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-use-cases" class="section-name selfRef">Use Cases</a>
+      </h2>
+<p id="section-2-1">As noted in <a href="#introduction" class="auto internal xref">Section 1</a>, MOQT is a content-agnostic
+publish/subscribe protocol. It can carry any data that fits the
+track/group/object model — media is simply the use case that
+motivated its design. Other potential applications include IoT
+telemetry distribution, collaborative document state
+synchronisation, real-time game state replication, and financial
+market data feeds.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">This section describes the primary media use cases that have driven
+the protocol design. They illustrate the requirements that shaped
+the architecture, but do not represent an exhaustive list of what
+MOQT can be used for.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<div id="uc-live">
+<section id="section-2.1">
+        <h3 id="name-live-streaming-media-delive">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-live-streaming-media-delive" class="section-name selfRef">Live Streaming Media Delivery</a>
+        </h3>
+<p id="section-2.1-1">In live streaming, an original publisher encodes and publishes media
+content that is delivered through one or more relays to a potentially
+large number of end subscribers.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.1-2">
+<pre>
+ Original                                         End
+ Publisher --&gt; Relay --&gt; Relay --&gt; ... --&gt; Relay --&gt; Subscribers
+                                                   (many)
+</pre><a href="#section-2.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-2.1-3">Key characteristics:<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.1-4.1">
+            <p id="section-2.1-4.1.1">One-to-many distribution, typically through a tree of relays.<a href="#section-2.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-4.2">
+            <p id="section-2.1-4.2.1">Target end-to-end latency ranges from under one second to several
+seconds, depending on the application.<a href="#section-2.1-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-4.3">
+            <p id="section-2.1-4.3.1">Subscribers may join at any time and must be able to start playback
+from a recent group boundary.<a href="#section-2.1-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-4.4">
+            <p id="section-2.1-4.4.1">Adaptive bitrate (ABR) switching between alternate encodings of the
+same content allows subscribers to adapt to varying network
+conditions.<a href="#section-2.1-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-4.5">
+            <p id="section-2.1-4.5.1">The original publisher produces a catalog describing available
+tracks (resolutions, bitrates, codecs) so subscribers can make
+informed selections.<a href="#section-2.1-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="uc-conferencing">
+<section id="section-2.2">
+        <h3 id="name-real-time-conferencing">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-real-time-conferencing" class="section-name selfRef">Real-Time Conferencing</a>
+        </h3>
+<p id="section-2.2-1">In conferencing, multiple participants each act as both original
+publisher and end subscriber. Each participant publishes their own
+audio and video tracks and subscribes to tracks from other
+participants.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.2-2">
+<pre>
+ Participant A ---+            +--- Participant C
+                  |            |
+                  v            v
+              +-------+    +-------+
+              | Relay |&lt;--&gt;| Relay |
+              +-------+    +-------+
+                  ^            ^
+                  |            |
+ Participant B ---+            +--- Participant D
+</pre><a href="#section-2.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-2.2-3">Key characteristics:<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.2-4.1">
+            <p id="section-2.2-4.1.1">Many-to-many communication with low participant counts (tens to
+hundreds).<a href="#section-2.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-4.2">
+            <p id="section-2.2-4.2.1">Target latency is interactive: below 500 milliseconds end-to-end.<a href="#section-2.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-4.3">
+            <p id="section-2.2-4.3.1">Each participant subscribes to a subset of available tracks (e.g.,
+active speakers only).<a href="#section-2.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-4.4">
+            <p id="section-2.2-4.4.1">Scalable video coding (SVC) or simulcast may be used, with the
+relay or subscriber selecting appropriate layers.<a href="#section-2.2-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-4.5">
+            <p id="section-2.2-4.5.1">End-to-end encryption is particularly important since relays
+should not have access to media content.<a href="#section-2.2-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="uc-ingest">
+<section id="section-2.3">
+        <h3 id="name-content-contribution-and-pr">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-content-contribution-and-pr" class="section-name selfRef">Content Contribution and Primary Distribution</a>
+        </h3>
+<p id="section-2.3-1">In content contribution (ingest), a professional encoder at a
+production site publishes high-quality media to a relay operated by a
+distribution service (e.g., a CDN).<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.3-2">
+<pre>
+ Encoder/       CDN Ingress      CDN Edge
+ Producer  --&gt;  Relay       --&gt;  Relay(s)  --&gt;  Subscribers
+</pre><a href="#section-2.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-2.3-3">Key characteristics:<a href="#section-2.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.3-4.1">
+            <p id="section-2.3-4.1.1">The ingress relay receives the contributed content and may
+transcode it into multiple representations (resolutions, bitrates).<a href="#section-2.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.3-4.2">
+            <p id="section-2.3-4.2.1">After transcoding, the distribution service becomes the original
+publisher of the new representations — the transcoded tracks are
+distinct from the contributed track.<a href="#section-2.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.3-4.3">
+            <p id="section-2.3-4.3.1">Reliability is prioritised over latency for the contribution link.<a href="#section-2.3-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.3-4.4">
+            <p id="section-2.3-4.4.1">The same MOQT protocol is used for both the contribution link
+(encoder to ingress) and the distribution links (edge relays to
+subscribers), achieving the convergence goal.<a href="#section-2.3-4.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="architecture">
+<section id="section-3">
+      <h2 id="name-architecture-and-nodes">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-architecture-and-nodes" class="section-name selfRef">Architecture and Nodes</a>
+      </h2>
+<div id="roles">
+<section id="section-3.1">
+        <h3 id="name-roles">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-roles" class="section-name selfRef">Roles</a>
+        </h3>
+<p id="section-3.1-1">A MOQT deployment involves endpoints in the following roles:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3.1-2">
+          <dt id="section-3.1-2.1">Publisher:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-2.2">
+            <p id="section-3.1-2.2.1">Sends objects belonging to one or more tracks. A publisher
+responds to subscriptions and delivers matching objects to
+subscribers.<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-3.1-2.3">Subscriber:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-2.4">
+            <p id="section-3.1-2.4.1">Requests tracks and receives objects. A subscriber issues
+SUBSCRIBE or FETCH requests to obtain content.<a href="#section-3.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-3.1-2.5">Original Publisher:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-2.6">
+            <p id="section-3.1-2.6.1">The endpoint that creates and first publishes a track's content.
+The original publisher is responsible for the media encoding,
+object payload, and track properties.<a href="#section-3.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-3.1-2.7">End Subscriber:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-2.8">
+            <p id="section-3.1-2.8.1">The final consumer of a track's content. An end subscriber
+decodes and renders the media.<a href="#section-3.1-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-3.1-3">A single endpoint may act in multiple roles simultaneously. In
+conferencing, each participant is both an original publisher (for
+their own media) and an end subscriber (for other participants'
+media).<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="relays">
+<section id="section-3.2">
+        <h3 id="name-relays">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-relays" class="section-name selfRef">Relays</a>
+        </h3>
+<p id="section-3.2-1">Relays are intermediary nodes that are both publishers (to downstream
+subscribers) and subscribers (to upstream publishers). They terminate
+MOQT sessions on each side independently — a relay is not a
+transparent proxy.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">Relays provide:<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.2-3.1">
+            <p id="section-3.2-3.1.1">Fan-out: A single upstream subscription serves multiple downstream
+subscribers requesting the same track.<a href="#section-3.2-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.2-3.2">
+            <p id="section-3.2-3.2.1">Caching: Objects can be stored and served to subscribers that join
+later, without fetching from the original publisher again.<a href="#section-3.2-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.2-3.3">
+            <p id="section-3.2-3.3.1">Geographic distribution: Relays can be deployed close to
+subscribers to reduce latency.<a href="#section-3.2-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.2-4">Relays are content-agnostic: they forward object payloads without
+interpreting or modifying them. This enables end-to-end encryption
+where relays cannot access media content, while still performing
+their routing and caching functions based on object metadata
+(track names, group IDs, priorities, properties).<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-5">Relays are enforcement points for access and authorization. In many
+deployments that have any restriction on access of the content the
+relay is expected to be the node that receives proof of authorization
+and will be responsible to verify and periodically re-verify this
+proof before delivering content.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">Relays are also not necessarily application-agnostic when it
+comes to deployment and operation. The configuration of relay
+topologies, authorization policies, caching strategies, and resource
+limits are application-specific concerns. A relay serving a live
+streaming platform operates differently from one supporting a
+conferencing service, even though the protocol mechanics are
+identical. Moreover, even though relays need not parse media payload
+formats in order to forward content, they may still apply
+application-aware policy based on visible metadata, naming
+conventions, and authorization state.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<p id="section-3.2-7">For further discussion of relay operational considerations,
+including denial-of-service resilience, see
+<span>[<a href="#I-D.englishm-moq-relay-dos" class="cite xref">I-D.englishm-moq-relay-dos</a>]</span>.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="topologies">
+<section id="section-3.3">
+        <h3 id="name-deployment-topologies">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-deployment-topologies" class="section-name selfRef">Deployment Topologies</a>
+        </h3>
+<p id="section-3.3-1">MOQT supports several deployment topologies:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3.3-2">
+          <dt id="section-3.3-2.1">Point-to-point:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-2.2">
+            <p id="section-3.3-2.2.1">A publisher connects directly to a subscriber with no
+intermediate relay. Suitable for simple scenarios or testing.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<div class="alignLeft art-text artwork" id="section-3.3-3">
+<pre>
+ Publisher &lt;--&gt; Subscriber
+</pre><a href="#section-3.3-3" class="pilcrow">¶</a>
+</div>
+<span class="break"></span><dl class="dlParallel" id="section-3.3-4">
+          <dt id="section-3.3-4.1">Single relay:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-4.2">
+            <p id="section-3.3-4.2.1">A publisher connects to a relay, which serves one or more
+subscribers. The relay provides fan-out and caching.<a href="#section-3.3-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<div class="alignLeft art-text artwork" id="section-3.3-5">
+<pre>
+ Publisher &lt;--&gt; Relay &lt;--&gt; Subscriber(s)
+</pre><a href="#section-3.3-5" class="pilcrow">¶</a>
+</div>
+<span class="break"></span><dl class="dlParallel" id="section-3.3-6">
+          <dt id="section-3.3-6.1">Relay tree:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-6.2">
+            <p id="section-3.3-6.2.1">A publisher connects to an origin relay, which fans out to edge
+relays closer to subscribers. This is the typical CDN deployment
+model.<a href="#section-3.3-6.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<div class="alignLeft art-text artwork" id="section-3.3-7">
+<pre>
+ Publisher &lt;--&gt; Origin Relay &lt;--&gt; Edge Relay(s) &lt;--&gt; Subscriber(s)
+</pre><a href="#section-3.3-7" class="pilcrow">¶</a>
+</div>
+<span class="break"></span><dl class="dlParallel" id="section-3.3-8">
+          <dt id="section-3.3-8.1">Relay mesh:</dt>
+          <dd style="margin-left: 1.5em" id="section-3.3-8.2">
+            <p id="section-3.3-8.2.1">Relays interconnect with multiple peers, subscribing and
+publishing bidirectionally between each other. Each relay both
+receives content from and forwards content to its neighbouring
+relays. This topology suits conferencing and multi-publisher
+scenarios where content flows in multiple directions
+simultaneously and there is no single origin.<a href="#section-3.3-8.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<div class="alignLeft art-text artwork" id="section-3.3-9">
+<pre>
+ Publisher A &lt;--&gt; Relay 1 &lt;----&gt; Relay 2 &lt;--&gt; Subscriber C
+                   ^    ^       ^    ^
+                   |     \     /     |
+                   |      v   v      |
+                   |     Relay 3     |
+                   |       ^         |
+                   v       |         v
+         Subscriber B  Publisher D  Subscriber E
+</pre><a href="#section-3.3-9" class="pilcrow">¶</a>
+</div>
+<p id="section-3.3-10">In all topologies, each hop is an independent MOQT session. Relays
+manage subscriptions on each session independently and can
+aggregate multiple downstream subscriptions into a single upstream
+subscription.<a href="#section-3.3-10" class="pilcrow">¶</a></p>
+<p id="section-3.3-11">MOQT's session migration mechanism (GOAWAY) allows relays to be
+restarted or replaced without disrupting end-to-end delivery:
+subscribers re-establish sessions to a new relay and migrate their
+subscriptions.<a href="#section-3.3-11" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="data-model">
+<section id="section-4">
+      <h2 id="name-data-model">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-data-model" class="section-name selfRef">Data Model</a>
+      </h2>
+<p id="section-4-1">MOQT defines a hierarchical data model for organising media content.
+Understanding this model is essential to working with any part of
+the MoQ protocol suite. The data model is defined in Section 2 of
+<span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> and summarised below for convenience.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="hierarchy">
+<section id="section-4.1">
+        <h3 id="name-hierarchy">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-hierarchy" class="section-name selfRef">Hierarchy</a>
+        </h3>
+<p id="section-4.1-1">The data model has four levels:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.1-2">
+<pre>
+ Track
+   └── Group (join point)
+         └── Subgroup (stream-mapped unit)
+               └── Object (smallest addressable payload)
+</pre><a href="#section-4.1-2" class="pilcrow">¶</a>
+</div>
+<span class="break"></span><dl class="dlParallel" id="section-4.1-3">
+          <dt id="section-4.1-3.1">Track:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-3.2">
+            <p id="section-4.1-3.2.1">A named, time-ordered sequence of groups. Tracks are the unit of
+subscription — a subscriber requests a track by its Full Track
+Name and receives objects from that track.<a href="#section-4.1-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-3.3">Group:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-3.4">
+            <p id="section-4.1-3.4.1">A temporal collection of objects within a track. A group
+represents a join point: a subscriber can begin receiving content
+at any group boundary without needing prior groups. For video,
+a group typically corresponds to a Group of Pictures (GOP)
+starting with a random access point.<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-3.5">Subgroup:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-3.6">
+            <p id="section-4.1-3.6.1">A sequence of objects within a group that are sent on a single
+QUIC stream. Objects in a subgroup share priority and have
+dependency relationships consistent with in-order delivery.
+Subgroups enable the priority mechanism to favour certain objects
+(e.g., base-layer frames) over others within the same group.<a href="#section-4.1-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.1-3.7">Object:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.1-3.8">
+            <p id="section-4.1-3.8.1">The basic data element — an addressable, immutable sequence of
+bytes. Each object is uniquely identified by its Full Track Name,
+group ID, and object ID. Objects within a group are ordered by
+object ID.<a href="#section-4.1-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="naming">
+<section id="section-4.2">
+        <h3 id="name-track-naming">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-track-naming" class="section-name selfRef">Track Naming</a>
+        </h3>
+<p id="section-4.2-1">Every track is identified by a Full Track Name consisting of two
+parts:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.2-2">
+          <dt id="section-4.2-2.1">Track Namespace:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.2-2.2">
+            <p id="section-4.2-2.2.1">An ordered tuple of one or more fields ( up to 32) (e.g.,
+"example.com", "meeting123", "alice"). The namespace provides
+hierarchical structure that relays use for prefix-based routing
+and subscription matching.<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.2-2.3">Track Name:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.2-2.4">
+            <p id="section-4.2-2.4.1">A byte sequence identifying a specific track within the
+namespace (e.g., "video-hd", "audio", "catalog").<a href="#section-4.2-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.2-3">The combination of namespace and track name is unique within a
+given scope (the set of servers sharing a common connection URI
+authority and path). This uniqueness guarantee means that a Full
+Track Name can serve as a cache key.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="properties">
+<section id="section-4.3">
+        <h3 id="name-properties">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-properties" class="section-name selfRef">Properties</a>
+        </h3>
+<p id="section-4.3-1">Tracks and objects can carry additional metadata called Properties.
+Properties are visible to relays and can influence how content is
+distributed.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-4.3-2">
+          <dt id="section-4.3-2.1">Track Properties:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-2.2">
+            <p id="section-4.3-2.2.1">Metadata associated with an entire track. Examples include
+default publisher priority, group order preference, maximum
+cache duration, and delivery timeouts. Track Properties are
+communicated in control messages (PUBLISH, SUBSCRIBE_OK,
+FETCH_OK).<a href="#section-4.3-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.3-2.3">Object Properties:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-2.4">
+            <p id="section-4.3-2.4.1">Per-object metadata carried in object headers. MOQT defines
+the framework for object properties, including gap indicators
+(Prior Group ID Gap, Prior Object ID Gap). Media-specific
+properties such as timestamps and frame markings are defined by
+LOC and MSF for use with encoded audio/video samples.<a href="#section-4.3-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-4.3-2.5">Immutable Properties:</dt>
+          <dd style="margin-left: 1.5em" id="section-4.3-2.6">
+            <p id="section-4.3-2.6.1">A special container within either track or object properties whose
+contents must not be modified or removed by relays. Immutable
+Properties enable end-to-end authentication, allowing subscribers
+to verify that these values have not been changed by any relay.<a href="#section-4.3-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-4.3-3">Properties are registered in IANA registries and use a Key-Value-Pair
+encoding. Relays that do not understand a property must forward it
+unchanged.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="immutability">
+<section id="section-4.4">
+        <h3 id="name-object-immutability-and-cac">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-object-immutability-and-cac" class="section-name selfRef">Object Immutability and Cacheability</a>
+        </h3>
+<p id="section-4.4-1">A fundamental property of MOQT objects is immutability: once an
+object is published, its payload must never change. Two objects with
+the same Full Track Name, group ID, and object ID must contain
+identical bytes.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">This guarantee enables:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.4-3.1">
+            <p id="section-4.4-3.1.1">Caching at relays without cache-invalidation complexity.<a href="#section-4.4-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-3.2">
+            <p id="section-4.4-3.2.1">Deduplication when the same object arrives from multiple upstream
+sources.<a href="#section-4.4-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-3.3">
+            <p id="section-4.4-3.3.1">End-to-end integrity verification — a subscriber can detect if an
+object has been tampered with.<a href="#section-4.4-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.4-4">An object can transition from "exists" to "does not exist" (e.g.,
+cache expiry), but its contents cannot be modified. The protocol
+signals object status (normal, end-of-group, end-of-track) to
+communicate lifecycle information.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="transport">
+<section id="section-5">
+      <h2 id="name-moqt-the-transport-protocol">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-moqt-the-transport-protocol" class="section-name selfRef">MOQT: The Transport Protocol</a>
+      </h2>
+<p id="section-5-1">Media over QUIC Transport (MOQT) <span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> is the
+publish/subscribe protocol that carries objects between publishers and
+subscribers. MOQT treats all object payloads as opaque byte sequences
+— it provides delivery, prioritisation, and caching without any
+knowledge of the content being carried. This section provides an
+overview of its key mechanisms.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<div id="session-establishment">
+<section id="section-5.1">
+        <h3 id="name-session-establishment">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-session-establishment" class="section-name selfRef">Session Establishment</a>
+        </h3>
+<p id="section-5.1-1">MOQT runs over either native QUIC or WebTransport:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1-2.1">
+            <p id="section-5.1-2.1.1">Native QUIC: The client connects using ALPN "moqt" and identifies
+the server using a "moqt://" URI. The authority and path are
+communicated via Setup Options.<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.1-2.2">
+            <p id="section-5.1-2.2.1">WebTransport: The client establishes a WebTransport session over
+HTTP/3, using an HTTPS URI derived from the moqt:// URI.<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.1-3">Both provide stream multiplexing and secure transport, though the
+deployment model differs — particularly in browser-based environments
+where only WebTransport is available. Applications should treat them
+as functionally similar substrates with some environment-specific
+constraints.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-4">After the transport connection is established, each endpoint opens a
+unidirectional control stream and sends a SETUP message. The SETUP
+exchange negotiates the protocol version and extensions (Setup
+Options) before any other messages are exchanged.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="pub-sub">
+<section id="section-5.2">
+        <h3 id="name-publishing-and-subscribing">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-publishing-and-subscribing" class="section-name selfRef">Publishing and Subscribing</a>
+        </h3>
+<p id="section-5.2-1">MOQT provides several mechanisms for publishers and subscribers to
+exchange content:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.2-2">
+          <dt id="section-5.2-2.1">SUBSCRIBE:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.2-2.2">
+            <p id="section-5.2-2.2.1">A subscriber requests newly published objects for a track. The
+publisher responds with SUBSCRIBE_OK and begins forwarding
+matching objects as they are produced. Subscription filters
+(Largest Object, Next Group, AbsoluteStart, AbsoluteRange)
+control which objects are delivered.<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.2-2.3">PUBLISH:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.2-2.4">
+            <p id="section-5.2-2.4.1">A publisher initiates a subscription by pushing content to a
+subscriber. This inverts the usual direction — the publisher
+offers a track rather than waiting for a subscription request.<a href="#section-5.2-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.2-2.5">FETCH:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.2-2.6">
+            <p id="section-5.2-2.6.1">A subscriber requests a specific range of previously published
+objects. Unlike SUBSCRIBE, which delivers future objects, FETCH
+retrieves historical data. A Joining Fetch can be associated with
+a subscription to fill the gap between stored history and the
+live edge.<a href="#section-5.2-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.2-2.7">Namespace Discovery:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.2-2.8">
+            <p id="section-5.2-2.8.1">Publishers advertise available namespaces via PUBLISH_NAMESPACE.
+Subscribers discover content by sending SUBSCRIBE_NAMESPACE
+(to learn about matching namespaces) or SUBSCRIBE_TRACKS (to
+receive PUBLISH messages for tracks within matching namespaces).
+Relays use namespace prefix matching to route subscriptions to
+the appropriate upstream publishers.<a href="#section-5.2-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-5.2-3">All subscription interactions follow a state machine: Idle →
+Pending → Established → Terminated. Either endpoint can terminate
+a subscription — the subscriber via cancellation, the publisher
+via PUBLISH_DONE.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="priorities">
+<section id="section-5.3">
+        <h3 id="name-priorities-and-delivery">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-priorities-and-delivery" class="section-name selfRef">Priorities and Delivery</a>
+        </h3>
+<p id="section-5.3-1">When network capacity is insufficient to deliver all subscribed
+content, MOQT's priority system determines what gets delivered
+first:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.3-2.1">
+            <p id="section-5.3-2.1.1">Subscriber Priority: Set per-subscription by the subscriber to
+express relative importance among its own subscriptions.<a href="#section-5.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.2">
+            <p id="section-5.3-2.2.1">Publisher Priority: Set per-object by the publisher to express
+relative importance within a track (e.g., base layer vs.
+enhancement layer).<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-2.3">
+            <p id="section-5.3-2.3.1">Group Order: Ascending (oldest first) or descending (newest
+first) delivery of groups within a subscription.<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.3-3">Under congestion, lower-priority content may be delayed or dropped
+entirely. Two timeout mechanisms support controlled data loss:<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.3-4.1">
+            <p id="section-5.3-4.1.1">Object Delivery Timeout: If an object cannot be sent within this
+duration after its first byte was produced, it is discarded.<a href="#section-5.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-4.2">
+            <p id="section-5.3-4.2.1">Subgroup Delivery Timeout: If a completed subgroup's data is not
+fully acknowledged within this duration, the stream is reset.<a href="#section-5.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-5.3-5">Objects can be sent on QUIC streams (reliable, in-order within the
+stream) or as QUIC datagrams (unreliable, low-latency). The choice
+is the Object Forwarding Preference, set per-object by the original
+publisher.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="extensibility">
+<section id="section-5.4">
+        <h3 id="name-extensibility-and-session-m">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-extensibility-and-session-m" class="section-name selfRef">Extensibility and Session Management</a>
+        </h3>
+<p id="section-5.4-1">MOQT is designed for evolution without breaking existing
+implementations:<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5.4-2">
+          <dt id="section-5.4-2.1">Setup Options:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.4-2.2">
+            <p id="section-5.4-2.2.1">Negotiated per-session in the SETUP exchange. Unknown options are
+ignored, allowing new features to be introduced without breaking
+older endpoints.<a href="#section-5.4-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.4-2.3">Message Parameters:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.4-2.4">
+            <p id="section-5.4-2.4.1">Per-message metadata included in control messages. Parameters are
+peer-to-peer and are not forwarded by relays.<a href="#section-5.4-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.4-2.5">Properties:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.4-2.6">
+            <p id="section-5.4-2.6.1">Per-track and per-object metadata that is forwarded and cached by
+relays, unlike Message Parameters. Properties use IANA-registered
+type codes. Unknown properties must be forwarded unchanged.<a href="#section-5.4-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-5.4-2.7">GREASE:</dt>
+          <dd style="margin-left: 1.5em" id="section-5.4-2.8">
+            <p id="section-5.4-2.8.1">Reserved code points in all registries ensure implementations
+correctly handle unknown values without closing sessions.<a href="#section-5.4-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-5.4-3">GOAWAY supports graceful session migration and can reduce disruption
+during relay maintenance or replacement, but continuity depends on
+object availability, timing, and application/session policy.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="streaming-formats">
+<section id="section-6">
+      <h2 id="name-streaming-formats">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-streaming-formats" class="section-name selfRef">Streaming Formats</a>
+      </h2>
+<p id="section-6-1">MOQT is content-agnostic — it transports opaque object payloads
+without interpreting them. A streaming format defines how media
+content is packaged into MOQT objects and how subscribers discover
+and select tracks. Streaming formats bridge the gap between raw
+media encodings and the MOQT data model.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div id="sf-role">
+<section id="section-6.1">
+        <h3 id="name-role-of-a-streaming-format">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-role-of-a-streaming-format" class="section-name selfRef">Role of a Streaming Format</a>
+        </h3>
+<p id="section-6.1-1">A streaming format specifies:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.1-2.1">
+            <p id="section-6.1-2.1.1">How encoded media samples are mapped to MOQT objects and groups.<a href="#section-6.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-2.2">
+            <p id="section-6.1-2.2.1">A catalog format describing available tracks and their properties.<a href="#section-6.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-2.3">
+            <p id="section-6.1-2.3.1">Rules for time-alignment and ABR switching between tracks.<a href="#section-6.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-2.4">
+            <p id="section-6.1-2.4.1">Timeline information mapping MOQT group/object IDs to media
+presentation time.<a href="#section-6.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-2.5">
+            <p id="section-6.1-2.5.1">Any additional metadata tracks (events, logs, metrics).<a href="#section-6.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.1-3">Without a streaming format, a subscriber receiving objects would have
+no way to discover what content is available, how to decode it, or
+how to synchronise multiple tracks.<a href="#section-6.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="msf">
+<section id="section-6.2">
+        <h3 id="name-msf-moqt-streaming-format">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-msf-moqt-streaming-format" class="section-name selfRef">MSF: MOQT Streaming Format</a>
+        </h3>
+<p id="section-6.2-1">The MOQT Streaming Format (MSF) <span>[<a href="#I-D.ietf-moq-msf" class="cite xref">I-D.ietf-moq-msf</a>]</span> is the primary
+streaming format defined for MoQ. It uses LOC (Low
+Overhead Container) <span>[<a href="#I-D.ietf-moq-loc" class="cite xref">I-D.ietf-moq-loc</a>]</span> packaging, where each
+encoded media sample (audio frame or video frame) is placed in a
+separate MOQT object.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">MSF defines:<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-6.2-3">
+          <dt id="section-6.2-3.1">Catalog:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.2-3.2">
+            <p id="section-6.2-3.2.1">A JSON track named "catalog" that describes all available tracks
+in a namespace. The catalog includes codec information, bitrates,
+resolutions, language, and relationships between tracks (render
+groups for synchronised playback, alternate groups for ABR
+switching). Delta updates allow efficient signalling of track
+additions and removals.<a href="#section-6.2-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-6.2-3.3">Media Timeline:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.2-3.4">
+            <p id="section-6.2-3.4.1">An optional track that maps MOQT group/object IDs to media
+presentation timestamps and wallclock times. This enables seeking
+and synchronisation. A template mechanism supports regular
+patterns without requiring an explicit timeline track.<a href="#section-6.2-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-6.2-3.5">Event Timelines:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.2-3.6">
+            <p id="section-6.2-3.6.1">Optional metadata tracks carrying time-synchronised application
+data (e.g., sports scores, ad insertion markers, GPS coordinates).<a href="#section-6.2-3.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-6.2-3.7">Publish Tracks:</dt>
+          <dd style="margin-left: 1.5em" id="section-6.2-3.8">
+            <p id="section-6.2-3.8.1">Tracks defined in the catalog to which the subscriber can publish
+data back (e.g., QoE metrics, logs).<a href="#section-6.2-3.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-6.2-4">MSF supports content with target latencies ranging from real-time
+(under 500ms) to standard live (several seconds) to video-on-demand.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cmsf">
+<section id="section-6.3">
+        <h3 id="name-cmsf-cmaf-compliant-streami">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-cmsf-cmaf-compliant-streami" class="section-name selfRef">CMSF: CMAF-Compliant Streaming Format</a>
+        </h3>
+<p id="section-6.3-1">CMSF <span>[<a href="#I-D.ietf-moq-cmsf" class="cite xref">I-D.ietf-moq-cmsf</a>]</span> extends MSF to support CMAF (Common
+Media Application Format) packaged media. It is designed for
+workflows that use ISO-BMFF containers and existing DRM systems.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-2">Key differences from base MSF:<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.3-3.1">
+            <p id="section-6.3-3.1.1">Objects contain CMAF Chunks (moof+mdat boxes) rather than raw
+codec samples.<a href="#section-6.3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-3.2">
+            <p id="section-6.3-3.2.1">Initialization segments (CMAF Headers) are carried in the catalog
+as base64-encoded inline data.<a href="#section-6.3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-3.3">
+            <p id="section-6.3-3.3.1">Content protection uses Common Encryption (CENC) with commercial
+DRM systems (Widevine, PlayReady, FairPlay) rather than the
+application-layer encryption defined by MoQ Secure Objects.<a href="#section-6.3-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-3.4">
+            <p id="section-6.3-3.4.1">SAP-type event timelines signal stream access points for seeking.<a href="#section-6.3-3.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-6.3-4">CMSF targets deployments that need interoperability with existing
+DASH/HLS ecosystems and hardware-based content decryption modules.<a href="#section-6.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="layering">
+<section id="section-6.4">
+        <h3 id="name-layering">
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-layering" class="section-name selfRef">Layering</a>
+        </h3>
+<p id="section-6.4-1">The relationship between the components is:<a href="#section-6.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6.4-2">
+<pre>
+ +------------------+
+ | Application      |
+ +------------------+
+ | Streaming Format |  &lt;-- MSF or CMSF
+ | (catalog, rules) |
+ +------------------+
+ | Media Container  |  &lt;-- LOC or CMAF
+ +------------------+
+ | MOQT             |  &lt;-- transport protocol
+ +------------------+
+ | QUIC / WebTrans  |
+ +------------------+
+ | UDP / IP         |
+ +------------------+
+</pre><a href="#section-6.4-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6.4-3">The streaming format layer defines the media semantics. The
+container layer defines how individual samples are serialised.
+MOQT provides the delivery machinery. Applications select the
+appropriate combination for their needs.<a href="#section-6.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security">
+<section id="section-7">
+      <h2 id="name-security-architecture">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-security-architecture" class="section-name selfRef">Security Architecture</a>
+      </h2>
+<p id="section-7-1">MoQ employs a layered security model. Each layer addresses different
+threats and operates at a different scope.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<div id="hbh-security">
+<section id="section-7.1">
+        <h3 id="name-hop-by-hop-security">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-hop-by-hop-security" class="section-name selfRef">Hop-by-Hop Security</a>
+        </h3>
+<p id="section-7.1-1">MOQT runs over QUIC or WebTransport, both of which use TLS 1.3 for
+the underlying connection. This provides:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.1-2.1">
+            <p id="section-7.1-2.1.1">Confidentiality and integrity of all data on each hop.<a href="#section-7.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.1-2.2">
+            <p id="section-7.1-2.2.1">Server authentication (and optionally mutual authentication).<a href="#section-7.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.1-2.3">
+            <p id="section-7.1-2.3.1">Protection against on-path attackers between adjacent nodes.<a href="#section-7.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-7.1-3">However, hop-by-hop security does not protect content from relays.
+A relay terminates the TLS session and has access to all MOQT
+message contents, including object payloads, unless additional
+end-to-end protection is applied.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="e2e-security">
+<section id="section-7.2">
+        <h3 id="name-end-to-end-object-encryptio">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-end-to-end-object-encryptio" class="section-name selfRef">End-to-End Object Encryption</a>
+        </h3>
+<p id="section-7.2-1">MoQ Secure Objects <span>[<a href="#I-D.ietf-moq-secure-objects" class="cite xref">I-D.ietf-moq-secure-objects</a>]</span> provides
+end-to-end authenticated encryption of media object payloads. It is
+based on the SFrame mechanism (<span>[<a href="#RFC9605" class="cite xref">RFC9605</a>]</span>).<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2-2">The scheme:<a href="#section-7.2-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.2-3.1">
+            <p id="section-7.2-3.1.1">Encrypts the object payload and optional encrypted properties.<a href="#section-7.2-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.2-3.2">
+            <p id="section-7.2-3.2.1">Authenticates the group ID, object ID, Full Track Name, and
+immutable properties.<a href="#section-7.2-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.2-3.3">
+            <p id="section-7.2-3.3.1">Derives per-track keys from a shared base key using HKDF.<a href="#section-7.2-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.2-3.4">
+            <p id="section-7.2-3.4.1">Forms nonces from the group ID and object ID, guaranteeing
+uniqueness.<a href="#section-7.2-3.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-7.2-4">Relays can still route and cache objects based on unencrypted
+metadata (track names, group IDs, priorities, object properties)
+but cannot access the media content. The architecture separates
+metadata required for routing/caching from metadata that can be
+authenticated or encrypted end-to-end. The exact protected
+elements depend on the object security scheme and application
+profile.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
+<p id="section-7.2-5">Key distribution is out of scope for the MoQ specifications —
+applications use external key management systems (e.g., MLS-based key
+distribution for conferencing <span>[<a href="#RFC9750" class="cite xref">RFC9750</a>]</span>,<span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>, or out-of-band provisioning
+for streaming).<a href="#section-7.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authorization">
+<section id="section-7.3">
+        <h3 id="name-authorization">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-authorization" class="section-name selfRef">Authorization</a>
+        </h3>
+<p id="section-7.3-1">In general, MOQT defines where authorization material can be
+carried in protocol exchanges, while the semantic interpretation
+and verification procedure depend on the selected authorization
+scheme and the relay or publisher’s local policy.<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.3-2">MOQT provides a generic AUTHORIZATION TOKEN parameter that can be
+included in control messages (SUBSCRIBE, FETCH, PUBLISH,
+PUBLISH_NAMESPACE, and others). Both publishers and subscribers use
+this single mechanism to present credentials; relays verify the
+token before forwarding content or establishing upstream
+subscriptions. Tokens can be registered with session-scoped aliases
+to avoid retransmitting large values on every message.<a href="#section-7.3-2" class="pilcrow">¶</a></p>
+<p id="section-7.3-3">The working group has defined two authorization schemes that
+operate over this mechanism:<a href="#section-7.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.3-4.1">
+            <p id="section-7.3-4.1.1">Privacy Pass Authentication <span>[<a href="#I-D.ietf-moq-privacy-pass-auth" class="cite xref">I-D.ietf-moq-privacy-pass-auth</a>]</span> —
+provides privacy-preserving, unlinkable authorization using
+Privacy Pass tokens. It supports fine-grained access control
+through namespace and track name matching rules, and defines
+mechanisms for continuous re-authorization over long-lived
+sessions using batched tokens or a reverse issuance flow.<a href="#section-7.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.3-4.2">
+            <p id="section-7.3-4.2.1">Common Access Tokens (C4M) <span>[<a href="#I-D.ietf-moq-c4m" class="cite xref">I-D.ietf-moq-c4m</a>]</span> — provides a
+bearer token scheme using structured tokens with claims that
+express authorization scope. C4M follows a model familiar from
+HTTP-based systems.<a href="#section-7.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-7.3-5">The choice between schemes depends on application requirements:
+Privacy Pass prioritises subscriber anonymity, while C4M offers
+simpler integration for deployments with existing identity
+infrastructure.<a href="#section-7.3-5" class="pilcrow">¶</a></p>
+<p id="section-7.3-6">The streaming format catalog can signal authorization requirements
+per-track (via the authInfo field in MSF), allowing subscribers to
+discover what credentials they need before attempting to subscribe.<a href="#section-7.3-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="privacy">
+<section id="section-7.4">
+        <h3 id="name-privacy-considerations">
+<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-privacy-considerations" class="section-name selfRef">Privacy Considerations</a>
+        </h3>
+<p id="section-7.4-1">MoQ's relay-based architecture means that intermediaries necessarily
+observe certain metadata in the course of routing and caching
+content. Key privacy considerations include:<a href="#section-7.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.4-2.1">
+            <p id="section-7.4-2.1.1">Relay visibility of metadata: Track namespaces, track names,
+group IDs, and object properties are visible to every relay in
+the delivery path. This metadata can reveal information about
+content and participants even when payloads are end-to-end
+encrypted.<a href="#section-7.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.4-2.2">
+            <p id="section-7.4-2.2.1">Traffic analysis: Object sizes, timing patterns, and
+subscription behaviour can allow relays or on-path observers to
+infer what content is being consumed or who is communicating.<a href="#section-7.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.4-2.3">
+            <p id="section-7.4-2.3.1">Subscriber unlinkability: Without privacy-preserving
+authorization (such as Privacy Pass), relays can correlate a
+subscriber's identity across multiple sessions or subscriptions.<a href="#section-7.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-7.4-3">MOQT provides mechanisms that applications can use to mitigate
+these risks, including padding (to obscure traffic patterns) and
+token schemes that support unlinkable authentication. However,
+achieving strong privacy requires deliberate application design —
+for example, using generic namespace structures and consistent
+object sizes.<a href="#section-7.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="application">
+<section id="section-8">
+      <h2 id="name-defining-a-moq-application">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-defining-a-moq-application" class="section-name selfRef">Defining a MoQ Application</a>
+      </h2>
+<p id="section-8-1">MOQT, streaming formats, container formats, and security mechanisms
+are composable building blocks. A complete MoQ application is defined
+by specifying which components to use and how they are configured.
+This set of choices is also what creates an interoperability point:
+two implementations that make the same choices can exchange content
+without additional negotiation.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<div id="design-choices">
+<section id="section-8.1">
+        <h3 id="name-application-design-choices">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-application-design-choices" class="section-name selfRef">Application Design Choices</a>
+        </h3>
+<p id="section-8.1-1">Defining a MoQ application requires decisions in each of the
+following areas:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-8.1-2">
+          <dt id="section-8.1-2.1">Transport version:</dt>
+          <dd style="margin-left: 1.5em" id="section-8.1-2.2">
+            <p id="section-8.1-2.2.1">Which MOQT version (ALPN value) the application requires. This
+determines the available protocol features.<a href="#section-8.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-8.1-2.3">Streaming format and catalog:</dt>
+          <dd style="margin-left: 1.5em" id="section-8.1-2.4">
+            <p id="section-8.1-2.4.1">How media or data is packaged into MOQT objects, and how
+available tracks are described to subscribers. An application may
+adopt an existing format (MSF, CMSF) or define a new one.<a href="#section-8.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-8.1-2.5">Container and codecs:</dt>
+          <dd style="margin-left: 1.5em" id="section-8.1-2.6">
+            <p id="section-8.1-2.6.1">What container format wraps the encoded samples (e.g., LOC, CMAF)
+and which codecs are supported.<a href="#section-8.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-8.1-2.7">Security:</dt>
+          <dd style="margin-left: 1.5em" id="section-8.1-2.8">
+            <p id="section-8.1-2.8.1">Whether end-to-end encryption is required (and which scheme), and
+which authorization scheme(s) are used to control access.<a href="#section-8.1-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-8.1-2.9">Relay deployment model:</dt>
+          <dd style="margin-left: 1.5em" id="section-8.1-2.10">
+            <p id="section-8.1-2.10.1">How relays are deployed and operated — tree, mesh, or hybrid —
+and what trust and authorization policies apply between nodes.<a href="#section-8.1-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-8.1-2.11">Extensions:</dt>
+          <dd style="margin-left: 1.5em" id="section-8.1-2.12">
+            <p id="section-8.1-2.12.1">Any mandatory MOQT extensions (Properties, Setup Options) that
+endpoints must support. Applications that need relay-visible
+metadata beyond what MOQT defines can register new Properties or
+use the application-reserved type ranges.<a href="#section-8.1-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-8.1-3">If existing components do not cover an application's needs, the MoQ
+framework supports extension without modifying the base protocol:
+new streaming formats can define their own catalog structures and
+packaging rules, new Properties can be registered via IANA, and new
+event timeline types can be defined for synchronised metadata.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="existing-apps">
+<section id="section-8.2">
+        <h3 id="name-existing-application-defini">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-existing-application-defini" class="section-name selfRef">Existing Application Definitions</a>
+        </h3>
+<p id="section-8.2-1">The MoQ working group has defined two complete application
+specifications that illustrate the design choices above:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-8.2-2">
+          <dt id="section-8.2-2.1">MSF (MOQT Streaming Format):</dt>
+          <dd style="margin-left: 1.5em" id="section-8.2-2.2">
+            <p id="section-8.2-2.2.1">Uses MOQT + LOC packaging + a JSON catalog. Targets real-time and
+live streaming with LOC's minimal per-sample overhead. Supports
+ABR switching via time-aligned alternate groups, media timelines,
+event timelines, and publish tracks for subscriber-to-platform
+communication. Defined in <span>[<a href="#I-D.ietf-moq-msf" class="cite xref">I-D.ietf-moq-msf</a>]</span>.<a href="#section-8.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-8.2-2.3">CMSF (CMAF-compliant Streaming Format):</dt>
+          <dd style="margin-left: 1.5em" id="section-8.2-2.4">
+            <p id="section-8.2-2.4.1">Extends MSF with CMAF/ISO-BMFF packaging and Common Encryption
+(CENC) for DRM integration. Targets deployments that interoperate
+with existing DASH/HLS ecosystems and hardware content decryption.
+Defined in <span>[<a href="#I-D.ietf-moq-cmsf" class="cite xref">I-D.ietf-moq-cmsf</a>]</span>.<a href="#section-8.2-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-8.2-3">Both specifications make concrete choices for every area listed in
+<a href="#design-choices" class="auto internal xref">Section 8.1</a>, producing fully interoperable application
+definitions.<a href="#section-8.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="reading-guide">
+<section id="section-8.3">
+        <h3 id="name-reading-guide">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-reading-guide" class="section-name selfRef">Reading Guide</a>
+        </h3>
+<p id="section-8.3-1">The following table maps common goals to the relevant specifications:<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Goal</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Understand the wire protocol and session mechanics</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Build a live streaming or conferencing application using LOC</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.ietf-moq-msf" class="cite xref">I-D.ietf-moq-msf</a>]</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Use CMAF packaging with DRM</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.ietf-moq-cmsf" class="cite xref">I-D.ietf-moq-cmsf</a>]</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Add end-to-end encryption</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.ietf-moq-secure-objects" class="cite xref">I-D.ietf-moq-secure-objects</a>]</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Implement privacy-preserving authorization</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.ietf-moq-privacy-pass-auth" class="cite xref">I-D.ietf-moq-privacy-pass-auth</a>]</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Implement bearer-token authorization</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.ietf-moq-c4m" class="cite xref">I-D.ietf-moq-c4m</a>]</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Understand the LOC container format</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.ietf-moq-loc" class="cite xref">I-D.ietf-moq-loc</a>]</span>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">Operate relays and understand DoS resilience</td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <span>[<a href="#I-D.englishm-moq-relay-dos" class="cite xref">I-D.englishm-moq-relay-dos</a>]</span>
+</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-9">
+      <h2 id="name-security-considerations">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-9-1">The MoQ security model is described in <a href="#security" class="auto internal xref">Section 7</a>. The key
+residual risks are:<a href="#section-9-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9-2">
+        <dt id="section-9-2.1">Relay Trust:</dt>
+        <dd style="margin-left: 1.5em" id="section-9-2.2">
+          <p id="section-9-2.2.1">Relays see all MOQT metadata and, without E2E encryption, all
+object payloads. Deployments must carefully consider which
+entities operate relays and what authorization they require.<a href="#section-9-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-2.3">Cache Poisoning:</dt>
+        <dd style="margin-left: 1.5em" id="section-9-2.4">
+          <p id="section-9-2.4.1">If a relay accepts objects from an unauthorized publisher, it may
+serve corrupted content to subscribers. Relay implementations
+must verify publisher identity and authorization before caching.<a href="#section-9-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-2.5">Traffic Analysis:</dt>
+        <dd style="margin-left: 1.5em" id="section-9-2.6">
+          <p id="section-9-2.6.1">Even with E2E encryption, object sizes, timing patterns, and
+track names can reveal content characteristics. Padding and
+generic naming mitigate but do not eliminate this risk.<a href="#section-9-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-2.7">Authorization Token Replay:</dt>
+        <dd style="margin-left: 1.5em" id="section-9-2.8">
+          <p id="section-9-2.8.1">Token replay protection is delegated to the specific token
+scheme. Implementations must select schemes with appropriate
+replay resistance for their threat model.<a href="#section-9-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-9-2.9">Amplification:</dt>
+        <dd style="margin-left: 1.5em" id="section-9-2.10">
+          <p id="section-9-2.10.1">A single SUBSCRIBE can trigger unbounded data flow from a
+publisher or relay. Rate limiting, per-session resource caps,
+and the EXCESSIVE_LOAD error code provide defences. See
+<span>[<a href="#I-D.englishm-moq-relay-dos" class="cite xref">I-D.englishm-moq-relay-dos</a>]</span> for detailed analysis.<a href="#section-9-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="iana">
+<section id="section-10">
+      <h2 id="name-iana-considerations">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-10-1">This document has no IANA actions.<a href="#section-10-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="contributors">
+<section id="section-11">
+      <h2 id="name-contributors">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-contributors" class="section-name selfRef">Contributors</a>
+      </h2>
+<p id="section-11-1">The following persons have contributed to this document:<a href="#section-11-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11-2.1">
+          <p id="section-11-2.1.1">Gwendal Simon<a href="#section-11-2.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="section-12">
+      <h2 id="name-acknowledgments">
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+    </h2>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-13">
+      <h2 id="name-informative-references">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+      </h2>
+<dl class="references">
+<dt id="RFC9000">[RFC9000]</dt>
+      <dd>
+<span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9000">https://www.rfc-editor.org/info/rfc9000</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9605">[RFC9605]</dt>
+      <dd>
+<span class="refAuthor">Omara, E.</span>, <span class="refAuthor">Uberti, J.</span>, <span class="refAuthor">Murillo, S. G.</span>, <span class="refAuthor">Barnes, R., Ed.</span>, and <span class="refAuthor">Y. Fablet</span>, <span class="refTitle">"Secure Frame (SFrame): Lightweight Authenticated Encryption for Real-Time Media"</span>, <span class="seriesInfo">RFC 9605</span>, <span class="seriesInfo">DOI 10.17487/RFC9605</span>, <time datetime="2024-08" class="refDate">August 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9605">https://www.rfc-editor.org/info/rfc9605</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9420">[RFC9420]</dt>
+      <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="seriesInfo">RFC 9420</span>, <span class="seriesInfo">DOI 10.17487/RFC9420</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9420">https://www.rfc-editor.org/info/rfc9420</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9750">[RFC9750]</dt>
+      <dd>
+<span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Omara, E.</span>, <span class="refAuthor">Inguva, S.</span>, and <span class="refAuthor">A. Duric</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Architecture"</span>, <span class="seriesInfo">RFC 9750</span>, <span class="seriesInfo">DOI 10.17487/RFC9750</span>, <time datetime="2025-04" class="refDate">April 2025</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9750">https://www.rfc-editor.org/info/rfc9750</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-moq-transport">[I-D.ietf-moq-transport]</dt>
+      <dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-18</span>, <time datetime="2026-05-12" class="refDate">12 May 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-18">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-18</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-moq-msf">[I-D.ietf-moq-msf]</dt>
+      <dd>
+<span class="refAuthor">Law, W.</span> and <span class="refAuthor">S. Nandakumar</span>, <span class="refTitle">"MOQT Streaming Format"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-msf-01</span>, <time datetime="2026-06-02" class="refDate">2 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-msf-01">https://datatracker.ietf.org/doc/html/draft-ietf-moq-msf-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-moq-cmsf">[I-D.ietf-moq-cmsf]</dt>
+      <dd>
+<span class="refAuthor">Law, W.</span>, <span class="refTitle">"CMSF- a CMAF compliant implementation of MOQT Streaming Format"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-cmsf-01</span>, <time datetime="2026-06-03" class="refDate">3 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-cmsf-01">https://datatracker.ietf.org/doc/html/draft-ietf-moq-cmsf-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-moq-secure-objects">[I-D.ietf-moq-secure-objects]</dt>
+      <dd>
+<span class="refAuthor">Jennings, C. F.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">R. Barnes</span>, <span class="refTitle">"End-to-End Secure Objects for Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-secure-objects-00</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-secure-objects-00">https://datatracker.ietf.org/doc/html/draft-ietf-moq-secure-objects-00</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-moq-privacy-pass-auth">[I-D.ietf-moq-privacy-pass-auth]</dt>
+      <dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Jennings, C. F.</span>, and <span class="refAuthor">T. Meunier</span>, <span class="refTitle">"Privacy Pass Authentication for Media over QUIC (MoQ)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-privacy-pass-auth-02</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-privacy-pass-auth-02">https://datatracker.ietf.org/doc/html/draft-ietf-moq-privacy-pass-auth-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-moq-c4m">[I-D.ietf-moq-c4m]</dt>
+      <dd>
+<span class="refAuthor">Law, W.</span>, <span class="refAuthor">Lemmons, C.</span>, <span class="refAuthor">Simon, G.</span>, and <span class="refAuthor">S. Nandakumar</span>, <span class="refTitle">"Authorization scheme for MOQT using Common Access Tokens"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-c4m-01</span>, <time datetime="2026-06-18" class="refDate">18 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-c4m-01">https://datatracker.ietf.org/doc/html/draft-ietf-moq-c4m-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-moq-loc">[I-D.ietf-moq-loc]</dt>
+      <dd>
+<span class="refAuthor">Zanaty, M.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">P. Thatcher</span>, <span class="refTitle">"Low Overhead Media Container"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-loc-02</span>, <time datetime="2026-03-15" class="refDate">15 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-02">https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-webtrans-overview">[I-D.ietf-webtrans-overview]</dt>
+      <dd>
+<span class="refAuthor">Kinnear, E.</span> and <span class="refAuthor">V. Vasiliev</span>, <span class="refTitle">"The WebTransport Protocol Framework"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-overview-12</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-12">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-12</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.englishm-moq-relay-dos">[I-D.englishm-moq-relay-dos]</dt>
+    <dd>
+<span class="refAuthor">English, M.</span>, <span class="refAuthor">Pardue, L.</span>, <span class="refAuthor">Sharma, A.</span>, and <span class="refAuthor">I. Swett</span>, <span class="refTitle">"Denial-of-Service Considerations for Media over QUIC Relay Deployments"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-englishm-moq-relay-dos-00</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-englishm-moq-relay-dos-00">https://datatracker.ietf.org/doc/html/draft-englishm-moq-relay-dos-00</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Magnus Westerlund</span></div>
+<div dir="auto" class="left"><span class="org">Ericsson</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:magnus.westerlund@ericsson.com" class="email">magnus.westerlund@ericsson.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Zaheduzzaman Sarker</span></div>
+<div dir="auto" class="left"><span class="org">Nokia</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:zaheduzzaman.sarker@nokia.com" class="email">zaheduzzaman.sarker@nokia.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
