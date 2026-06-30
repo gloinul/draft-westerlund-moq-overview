@@ -1309,12 +1309,13 @@ how they are composed to create interoperable media applications.<a href="#secti
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Media over QUIC (MoQ) incorporates a set of
-specifications for scalable, low-latency delivery over the Internet.
-The core output is MOQT, a publish/subscribe transport protocol built
-on QUIC <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> that uses intermediate relays to achieve
-distribution at scale. On top of MOQT, additional specifications
-define streaming formats, media containers, and end-to-end security
+<p id="section-1-1">Media over QUIC (MoQ) is an IETF working group that produces a
+suite of protocol specifications for scalable, low-latency delivery
+over the Internet. The central specification is the MoQ Transport
+protocol (MOQT), a publish/subscribe protocol built on QUIC
+<span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> that uses intermediate relays to achieve distribution
+at scale. Additional specifications build on MOQT to define
+streaming formats, media containers, and end-to-end security
 mechanisms.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">This document provides a high-level overview of these component protocols, how
 they relate to each other, and how they are composed to create
@@ -1422,7 +1423,7 @@ of MSF for CMAF/ISO-BMFF packaged media.<a href="#section-1.2-4.3.1" class="pilc
 </li>
           <li class="normal" id="section-1.2-4.4">
             <p id="section-1.2-4.4.1">MoQ Secure Objects <span>[<a href="#I-D.ietf-moq-secure-objects" class="cite xref">I-D.ietf-moq-secure-objects</a>]</span> — end-to-end
-authenticated encryption for media objects.<a href="#section-1.2-4.4.1" class="pilcrow">¶</a></p>
+authenticated encryption for content objects.<a href="#section-1.2-4.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-1.2-4.5">
             <p id="section-1.2-4.5.1">Privacy Pass Authentication <span>[<a href="#I-D.ietf-moq-privacy-pass-auth" class="cite xref">I-D.ietf-moq-privacy-pass-auth</a>]</span> —
@@ -1445,8 +1446,8 @@ media container format.<a href="#section-1.2-4.7.1" class="pilcrow">¶</a></p>
 <a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
         </h3>
 <p id="section-1.3-1">This document uses the following terms. Definitions attempt to be
-consistent with <span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> but in case of discrepency
-rely on MOQT specification.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+consistent with <span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> but in case of discrepancy
+rely on the MOQT specification.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-1.3-2">
           <dt id="section-1.3-2.1">Client:</dt>
           <dd style="margin-left: 1.5em" id="section-1.3-2.2">
@@ -1552,9 +1553,9 @@ content that is delivered through one or more relays to a potentially
 large number of end subscribers.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-2.1-2">
 <pre>
- Original                                         End
+ Original                                            End
  Publisher --&gt; Relay --&gt; Relay --&gt; ... --&gt; Relay --&gt; Subscribers
-                                                   (many)
+                                                     (many)
 </pre><a href="#section-2.1-2" class="pilcrow">¶</a>
 </div>
 <p id="section-2.1-3">Key characteristics:<a href="#section-2.1-3" class="pilcrow">¶</a></p>
@@ -1752,8 +1753,8 @@ topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
 streaming platform operates differently from one supporting a
 conferencing service, even though the protocol mechanics are
-identical. Moreover, eventhough relays need not parse media payload
-formats in order to forward content, but they may still apply
+identical. Moreover, even though relays need not parse media payload
+formats in order to forward content, they may still apply
 application-aware policy based on visible metadata, naming
 conventions, and authorization state.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
 <p id="section-3.2-7">For further discussion of relay operational considerations,
@@ -1771,7 +1772,8 @@ including denial-of-service resilience, see
           <dt id="section-3.3-2.1">Point-to-point:</dt>
           <dd style="margin-left: 1.5em" id="section-3.3-2.2">
             <p id="section-3.3-2.2.1">A publisher connects directly to a subscriber with no
-intermediate relay. Suitable for simple scenarios or testing.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+intermediate relay. Suitable for contribution ingest,
+AI produced dissemination,  or testing.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1835,10 +1837,12 @@ simultaneously and there is no single origin.<a href="#section-3.3-8.2.1" class=
 manage subscriptions on each session independently and can
 aggregate multiple downstream subscriptions into a single upstream
 subscription.<a href="#section-3.3-10" class="pilcrow">¶</a></p>
-<p id="section-3.3-11">MOQT's session migration mechanism (GOAWAY) allows relays to be
-restarted or replaced without disrupting end-to-end delivery:
-subscribers re-establish sessions to a new relay and migrate their
-subscriptions.<a href="#section-3.3-11" class="pilcrow">¶</a></p>
+<p id="section-3.3-11">MOQT supports graceful session migration: a relay that needs to shut
+down sends a GOAWAY message directing its peers to reconnect to a
+different server. The peers then establish new sessions and re-issue
+their subscriptions, allowing relay maintenance or replacement, but
+continuity depends on object availability, timing, and
+application/session policy.<a href="#section-3.3-11" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1851,7 +1855,7 @@ subscriptions.<a href="#section-3.3-11" class="pilcrow">¶</a></p>
 <p id="section-4-1">MOQT defines a hierarchical data model for organising media content.
 Understanding this model is essential to working with any part of
 the MoQ protocol suite. The data model is defined in Section 2 of
-<span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> and summarized below for your convinence.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<span>[<a href="#I-D.ietf-moq-transport" class="cite xref">I-D.ietf-moq-transport</a>]</span> and summarised below for convenience.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <div id="hierarchy">
 <section id="section-4.1">
         <h3 id="name-hierarchy">
@@ -1927,9 +1931,11 @@ namespace (e.g., "video-hd", "audio", "catalog").<a href="#section-4.2-2.4.1" cl
         <dd class="break"></dd>
 </dl>
 <p id="section-4.2-3">The combination of namespace and track name is unique within a
-given scope (the set of servers sharing a common connection URI
-authority and path). This uniqueness guarantee means that a Full
-Track Name can serve as a cache key.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+given scope. A scope is defined by the server or set of servers
+that a client connects to — specifically, those sharing the same
+host and path in the connection URI. Within a scope, no two
+distinct tracks can have the same Full Track Name, which means it
+can serve as a cache key at relays.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="properties">
@@ -1939,7 +1945,10 @@ Track Name can serve as a cache key.<a href="#section-4.2-3" class="pilcrow">¶<
         </h3>
 <p id="section-4.3-1">Tracks and objects can carry additional metadata called Properties.
 Properties are visible to relays and can influence how content is
-distributed.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+distributed. There are two scopes of properties — track-wide and
+per-object — and within either scope, individual properties can
+optionally be marked as immutable to support end-to-end
+authentication.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-4.3-2">
           <dt id="section-4.3-2.1">Track Properties:</dt>
           <dd style="margin-left: 1.5em" id="section-4.3-2.2">
@@ -1953,19 +1962,19 @@ FETCH_OK).<a href="#section-4.3-2.2.1" class="pilcrow">¶</a></p>
 <dt id="section-4.3-2.3">Object Properties:</dt>
           <dd style="margin-left: 1.5em" id="section-4.3-2.4">
             <p id="section-4.3-2.4.1">Per-object metadata carried in object headers. MOQT defines
-the framework for object properties (examples include gap
-indicators - Prior Group ID Gap, Prior Object ID Gap, while
-media-specific specifications such as timestamps and frame
-markings are defined in LOC and MSF define additional semantics
-for properties relevant to encoded audio/video samples.<a href="#section-4.3-2.4.1" class="pilcrow">¶</a></p>
+the framework for object properties, including gap indicators
+(Prior Group ID Gap, Prior Object ID Gap). Media-specific
+properties such as timestamps and frame markings are defined by
+LOC and MSF for use with encoded audio/video samples.<a href="#section-4.3-2.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.3-2.5">Immutable Properties:</dt>
           <dd style="margin-left: 1.5em" id="section-4.3-2.6">
-            <p id="section-4.3-2.6.1">A special container within either track or object properties whose
-contents must not be modified or removed by relays. Properties
-marked as Immutable so they can be end-to-end authenticated and thus
-verified as not being changed or removed by any relay.<a href="#section-4.3-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-4.3-2.6.1">Either track or object properties may be placed inside an
+Immutable Properties container. Once set by the original
+publisher, these cannot be modified or removed by relays. This
+enables end-to-end authentication: subscribers can verify that
+immutable values have not been altered in transit.<a href="#section-4.3-2.6.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1979,8 +1988,8 @@ unchanged.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
         <h3 id="name-object-immutability-and-cac">
 <a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-object-immutability-and-cac" class="section-name selfRef">Object Immutability and Cacheability</a>
         </h3>
-<p id="section-4.4-1">A fundamental property of MOQT objects is immutability: once an
-object is published, its payload must never change. Two objects with
+<p id="section-4.4-1">A fundamental property of MOQT objects is immutability: once an object
+is published, its payload must never change. Two received objects with
 the same Full Track Name, group ID, and object ID must contain
 identical bytes.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.4-2">This guarantee enables:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
@@ -2024,21 +2033,21 @@ overview of its key mechanisms.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <p id="section-5.1-1">MOQT runs over either native QUIC or WebTransport:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-2.1">
-            <p id="section-5.1-2.1.1">Native QUIC: The client connects using ALPN "moqt" and identifies
-the server using a "moqt://" URI. The authority and path are
-communicated via Setup Options.<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-2.1.1">Native QUIC: The client connects using the TLS
+Application-Layer Protocol Negotiation (ALPN) identifier "moqt"
+and identifies the server using a "moqt://" URI. The authority
+and path are communicated via Setup Options.<a href="#section-5.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.1-2.2">
             <p id="section-5.1-2.2.1">WebTransport: The client establishes a WebTransport session over
 HTTP/3, using an HTTPS URI derived from the moqt:// URI.<a href="#section-5.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.1-3">MOQT can run over native QUIC or over WebTransport over HTTP/3.
-While both provide stream multiplexing and secure transport, the
-deployment model and some capabilities are constrained differently,
-especially in browser-based WebTransport environments. Applications
-should treat them as functionally similar substrates, not strictly
-identical ones.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-3">Both provide stream multiplexing and secure transport, though the
+deployment model differs — particularly in browser-based environments
+where only WebTransport is available. Applications should treat them
+as functionally similar substrates with some environment-specific
+constraints.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <p id="section-5.1-4">After the transport connection is established, each endpoint opens a
 unidirectional control stream and sends a SETUP message. The SETUP
 exchange negotiates the protocol version and extensions (Setup
@@ -2072,10 +2081,13 @@ offers a track rather than waiting for a subscription request.<a href="#section-
 <dt id="section-5.2-2.5">FETCH:</dt>
           <dd style="margin-left: 1.5em" id="section-5.2-2.6">
             <p id="section-5.2-2.6.1">A subscriber requests a specific range of previously published
-objects. Unlike SUBSCRIBE, which delivers future objects, FETCH
-retrieves historical data. A Joining Fetch can be associated with
-a subscription to fill the gap between stored history and the
-live edge.<a href="#section-5.2-2.6.1" class="pilcrow">¶</a></p>
+objects. Unlike SUBSCRIBE, which delivers objects as they are
+produced going forward, FETCH retrieves objects that already
+exist. A subscriber that joins a track mid-stream typically
+needs both: a SUBSCRIBE to receive new objects, and a FETCH
+(called a Joining Fetch) to retrieve the recent objects needed
+to start decoding — for example, the beginning of the current
+video group of pictures.<a href="#section-5.2-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-5.2-2.7">Namespace Discovery:</dt>
@@ -2127,13 +2139,22 @@ duration after its first byte was produced, it is discarded.<a href="#section-5.
 </li>
           <li class="normal" id="section-5.3-4.2">
             <p id="section-5.3-4.2.1">Subgroup Delivery Timeout: If a completed subgroup's data is not
-fully acknowledged within this duration, the stream is reset.<a href="#section-5.3-4.2.1" class="pilcrow">¶</a></p>
+fully acknowledged within this duration, the stream is reset —
+meaning any undelivered data on that stream is abandoned and will
+not be retransmitted.<a href="#section-5.3-4.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-5.3-5">Objects can be sent on QUIC streams (reliable, in-order within the
 stream) or as QUIC datagrams (unreliable, low-latency). The choice
 is the Object Forwarding Preference, set per-object by the original
 publisher.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+<p id="section-5.3-6">Client side Adaptive Bitrate (ABR) is possible by either ending a
+subscription and replace it with another track that is another
+represenation at another bit-rate than the previous one. Steering
+these changes to be done at the next group boundary.<a href="#section-5.3-6" class="pilcrow">¶</a></p>
+<p id="section-5.3-7">The WG is working on sender side ABR where the publisher uses
+its understanding of the congestion situation to select the
+set of tracks to be published to the subscriber.<a href="#section-5.3-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="extensibility">
@@ -2159,15 +2180,17 @@ peer-to-peer and are not forwarded by relays.<a href="#section-5.4-2.4.1" class=
           <dd class="break"></dd>
 <dt id="section-5.4-2.5">Properties:</dt>
           <dd style="margin-left: 1.5em" id="section-5.4-2.6">
-            <p id="section-5.4-2.6.1">Per-track and per-object metadata that IS forwarded and cached by
-relays. Properties use IANA-registered type codes. Unknown
-properties must be forwarded unchanged.<a href="#section-5.4-2.6.1" class="pilcrow">¶</a></p>
+            <p id="section-5.4-2.6.1">Per-track and per-object metadata that is forwarded and cached by
+relays, unlike Message Parameters. Properties use IANA-registered
+type codes. Unknown properties must be forwarded unchanged.<a href="#section-5.4-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-5.4-2.7">GREASE:</dt>
+<dt id="section-5.4-2.7">GREASE (Generate Random Extensions And Sustain Extensibility):</dt>
           <dd style="margin-left: 1.5em" id="section-5.4-2.8">
-            <p id="section-5.4-2.8.1">Reserved code points in all registries ensure implementations
-correctly handle unknown values without closing sessions.<a href="#section-5.4-2.8.1" class="pilcrow">¶</a></p>
+            <p id="section-5.4-2.8.1">Reserved code points that implementations may send to exercise
+their peers' handling of unknown values. This ensures that
+deployed software does not break when new extensions are
+introduced.<a href="#section-5.4-2.8.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -2226,7 +2249,11 @@ how to synchronise multiple tracks.<a href="#section-6.1-3" class="pilcrow">¶</
 streaming format defined for MoQ. It uses LOC (Low
 Overhead Container) <span>[<a href="#I-D.ietf-moq-loc" class="cite xref">I-D.ietf-moq-loc</a>]</span> packaging, where each
 encoded media sample (audio frame or video frame) is placed in a
-separate MOQT object.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+separate MOQT object. This one-sample-per-object mapping allows
+the transport to make independent delivery decisions for each
+frame — for example, prioritising base-layer video frames over
+enhancement layers, or dropping an expired frame without affecting
+the delivery of subsequent frames.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 <p id="section-6.2-2">MSF defines:<a href="#section-6.2-2" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-6.2-3">
           <dt id="section-6.2-3.1">Catalog:</dt>
@@ -2275,8 +2302,10 @@ workflows that use ISO-BMFF containers and existing DRM systems.<a href="#sectio
 <p id="section-6.3-2">Key differences from base MSF:<a href="#section-6.3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.3-3.1">
-            <p id="section-6.3-3.1.1">Objects contain CMAF Chunks (moof+mdat boxes) rather than raw
-codec samples.<a href="#section-6.3-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-3.1.1">Objects contain CMAF Chunks rather than raw codec samples. A
+CMAF Chunk is the elementary media segment structure used by
+ISO-BMFF-based streaming (the container format behind DASH and
+HLS fMP4), consisting of metadata and media data boxes.<a href="#section-6.3-3.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-3.2">
             <p id="section-6.3-3.2.1">Initialization segments (CMAF Headers) are carried in the catalog
@@ -2352,7 +2381,7 @@ the underlying connection. This provides:<a href="#section-7.1-1" class="pilcrow
             <p id="section-7.1-2.3.1">Protection against on-path attackers between adjacent nodes.<a href="#section-7.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-7.1-3">However, hop-by-hop security does NOT protect content from relays.
+<p id="section-7.1-3">However, hop-by-hop security does not protect content from relays.
 A relay terminates the TLS session and has access to all MOQT
 message contents, including object payloads, unless additional
 end-to-end protection is applied.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
@@ -2376,11 +2405,14 @@ based on the SFrame mechanism (<span>[<a href="#RFC9605" class="cite xref">RFC96
 immutable properties.<a href="#section-7.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.2-3.3">
-            <p id="section-7.2-3.3.1">Derives per-track keys from a shared base key using HKDF.<a href="#section-7.2-3.3.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-3.3.1">Derives per-track keys from a shared base key using HKDF (a
+standard key derivation function that deterministically produces
+cryptographic keys from input material).<a href="#section-7.2-3.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.2-3.4">
-            <p id="section-7.2-3.4.1">Forms nonces from the group ID and object ID, guaranteeing
-uniqueness.<a href="#section-7.2-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-7.2-3.4.1">Forms a unique nonce (a value used exactly once) for each object
+from the group ID and object ID, ensuring that no two objects
+are encrypted with the same parameters.<a href="#section-7.2-3.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-7.2-4">Relays can still route and cache objects based on unencrypted
@@ -2412,8 +2444,8 @@ this single mechanism to present credentials; relays verify the
 token before forwarding content or establishing upstream
 subscriptions. Tokens can be registered with session-scoped aliases
 to avoid retransmitting large values on every message.<a href="#section-7.3-2" class="pilcrow">¶</a></p>
-<p id="section-7.3-3">The two defined authorization schemes that operate
-over this mechanism:<a href="#section-7.3-3" class="pilcrow">¶</a></p>
+<p id="section-7.3-3">The working group has defined two authorization schemes that
+operate over this mechanism:<a href="#section-7.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7.3-4.1">
             <p id="section-7.3-4.1.1">Privacy Pass Authentication <span>[<a href="#I-D.ietf-moq-privacy-pass-auth" class="cite xref">I-D.ietf-moq-privacy-pass-auth</a>]</span> —
@@ -2421,7 +2453,9 @@ provides privacy-preserving, unlinkable authorization using
 Privacy Pass tokens. It supports fine-grained access control
 through namespace and track name matching rules, and defines
 mechanisms for continuous re-authorization over long-lived
-sessions using batched tokens or a reverse issuance flow.<a href="#section-7.3-4.1.1" class="pilcrow">¶</a></p>
+sessions — either by obtaining multiple tokens in advance
+(batched issuance) or by exchanging a validated token for fresh
+ones directly with the relay (reverse issuance flow).<a href="#section-7.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-7.3-4.2">
             <p id="section-7.3-4.2.1">Common Access Tokens (C4M) <span>[<a href="#I-D.ietf-moq-c4m" class="cite xref">I-D.ietf-moq-c4m</a>]</span> — provides a
@@ -2497,7 +2531,9 @@ following areas:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-8.1-2">
           <dt id="section-8.1-2.1">Transport version:</dt>
           <dd style="margin-left: 1.5em" id="section-8.1-2.2">
-            <p id="section-8.1-2.2.1">Which MOQT version (ALPN value) the application requires. This
+            <p id="section-8.1-2.2.1">Which MOQT version the application requires, as identified by
+the protocol's ALPN string (the identifier used during TLS
+connection setup to select the application protocol). This
 determines the available protocol features.<a href="#section-8.1-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
