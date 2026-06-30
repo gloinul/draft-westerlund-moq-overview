@@ -356,7 +356,13 @@ where relays cannot access media content, while still performing
 their routing and caching functions based on object metadata
 (track names, group IDs, priorities, properties).
 
-However, relays are not necessarily application-agnostic when it
+Relays are enforcement points for access and authorization. In many
+deployments that have any restriction on access of the content the
+relay is expected to be the node that receives proof of authorization
+and will be responsible to verify and periodically re-verify this
+proof before delivering content.
+
+Relays are also not necessarily application-agnostic when it
 comes to deployment and operation. The configuration of relay
 topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
