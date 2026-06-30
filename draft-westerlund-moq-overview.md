@@ -58,12 +58,13 @@ how they are composed to create interoperable media applications.
 
 # Introduction {#introduction}
 
-Media over QUIC (MoQ) incorporates a set of
-specifications for scalable, low-latency delivery over the Internet.
-The core output is MOQT, a publish/subscribe transport protocol built
-on QUIC {{RFC9000}} that uses intermediate relays to achieve
-distribution at scale. On top of MOQT, additional specifications
-define streaming formats, media containers, and end-to-end security
+Media over QUIC (MoQ) is an IETF working group that produces a
+suite of protocol specifications for scalable, low-latency delivery
+over the Internet. The central specification is the MoQ Transport
+protocol (MOQT), a publish/subscribe protocol built on QUIC
+{{RFC9000}} that uses intermediate relays to achieve distribution
+at scale. Additional specifications build on MOQT to define
+streaming formats, media containers, and end-to-end security
 mechanisms.
 
 This document provides a high-level overview of these component protocols, how
@@ -146,7 +147,7 @@ The covered specifications are:
 - CMSF (CMAF-compliant MSF) {{I-D.ietf-moq-cmsf}} — an extension
   of MSF for CMAF/ISO-BMFF packaged media.
 - MoQ Secure Objects {{I-D.ietf-moq-secure-objects}} — end-to-end
-  authenticated encryption for media objects.
+  authenticated encryption for content objects.
 - Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
   privacy-preserving token-based authorization.
 - Common Access Tokens for MoQ (C4M) {{I-D.ietf-moq-c4m}} —
@@ -157,8 +158,8 @@ The covered specifications are:
 ## Terminology {#terminology}
 
 This document uses the following terms. Definitions attempt to be
-consistent with {{I-D.ietf-moq-transport}} but in case of discrepency
-rely on MOQT specification.
+consistent with {{I-D.ietf-moq-transport}} but in case of discrepancy
+rely on the MOQT specification.
 
 Client:
 : The party initiating a Transport Session.
@@ -232,9 +233,9 @@ content that is delivered through one or more relays to a potentially
 large number of end subscribers.
 
 ~~~
- Original                                         End
+ Original                                            End
  Publisher --> Relay --> Relay --> ... --> Relay --> Subscribers
-                                                   (many)
+                                                     (many)
 ~~~
 
 Key characteristics:
@@ -369,8 +370,8 @@ topologies, authorization policies, caching strategies, and resource
 limits are application-specific concerns. A relay serving a live
 streaming platform operates differently from one supporting a
 conferencing service, even though the protocol mechanics are
-identical. Moreover, eventhough relays need not parse media payload
-formats in order to forward content, but they may still apply
+identical. Moreover, even though relays need not parse media payload
+formats in order to forward content, they may still apply
 application-aware policy based on visible metadata, naming
 conventions, and authorization state.
 
@@ -384,7 +385,8 @@ MOQT supports several deployment topologies:
 
 Point-to-point:
 : A publisher connects directly to a subscriber with no
-  intermediate relay. Suitable for simple scenarios or testing.
+  intermediate relay. Suitable for contribution ingest,
+  AI produced dissemination,  or testing.
 
 ~~~
  Publisher <--> Subscriber
@@ -431,10 +433,12 @@ manage subscriptions on each session independently and can
 aggregate multiple downstream subscriptions into a single upstream
 subscription.
 
-MOQT's session migration mechanism (GOAWAY) allows relays to be
-restarted or replaced without disrupting end-to-end delivery:
-subscribers re-establish sessions to a new relay and migrate their
-subscriptions.
+MOQT supports graceful session migration: a relay that needs to shut
+down sends a GOAWAY message directing its peers to reconnect to a
+different server. The peers then establish new sessions and re-issue
+their subscriptions, allowing relay maintenance or replacement, but
+continuity depends on object availability, timing, and
+application/session policy.
 
 
 # Data Model {#data-model}
@@ -442,7 +446,7 @@ subscriptions.
 MOQT defines a hierarchical data model for organising media content.
 Understanding this model is essential to working with any part of
 the MoQ protocol suite. The data model is defined in Section 2 of
-{{I-D.ietf-moq-transport}} and summarized below for your convinence.
+{{I-D.ietf-moq-transport}} and summarised below for convenience.
 
 ## Hierarchy {#hierarchy}
 
@@ -496,15 +500,20 @@ Track Name:
   namespace (e.g., "video-hd", "audio", "catalog").
 
 The combination of namespace and track name is unique within a
-given scope (the set of servers sharing a common connection URI
-authority and path). This uniqueness guarantee means that a Full
-Track Name can serve as a cache key.
+given scope. A scope is defined by the server or set of servers
+that a client connects to — specifically, those sharing the same
+host and path in the connection URI. Within a scope, no two
+distinct tracks can have the same Full Track Name, which means it
+can serve as a cache key at relays.
 
 ## Properties {#properties}
 
 Tracks and objects can carry additional metadata called Properties.
 Properties are visible to relays and can influence how content is
-distributed.
+distributed. There are two scopes of properties — track-wide and
+per-object — and within either scope, individual properties can
+optionally be marked as immutable to support end-to-end
+authentication.
 
 Track Properties:
 : Metadata associated with an entire track. Examples include
@@ -515,17 +524,17 @@ Track Properties:
 
 Object Properties:
 : Per-object metadata carried in object headers. MOQT defines
-  the framework for object properties (examples include gap
-  indicators - Prior Group ID Gap, Prior Object ID Gap, while
-  media-specific specifications such as timestamps and frame
-  markings are defined in LOC and MSF define additional semantics
-  for properties relevant to encoded audio/video samples.
+  the framework for object properties, including gap indicators
+  (Prior Group ID Gap, Prior Object ID Gap). Media-specific
+  properties such as timestamps and frame markings are defined by
+  LOC and MSF for use with encoded audio/video samples.
 
 Immutable Properties:
-: A special container within either track or object properties whose
-  contents must not be modified or removed by relays. Properties
-  marked as Immutable so they can be end-to-end authenticated and thus
-  verified as not being changed or removed by any relay.
+: Either track or object properties may be placed inside an
+  Immutable Properties container. Once set by the original
+  publisher, these cannot be modified or removed by relays. This
+  enables end-to-end authentication: subscribers can verify that
+  immutable values have not been altered in transit.
 
 Properties are registered in IANA registries and use a Key-Value-Pair
 encoding. Relays that do not understand a property must forward it
@@ -533,8 +542,8 @@ unchanged.
 
 ## Object Immutability and Cacheability {#immutability}
 
-A fundamental property of MOQT objects is immutability: once an
-object is published, its payload must never change. Two objects with
+A fundamental property of MOQT objects is immutability: once an object
+is published, its payload must never change. Two received objects with
 the same Full Track Name, group ID, and object ID must contain
 identical bytes.
 
@@ -565,18 +574,18 @@ overview of its key mechanisms.
 
 MOQT runs over either native QUIC or WebTransport:
 
-- Native QUIC: The client connects using ALPN "moqt" and identifies
-  the server using a "moqt://" URI. The authority and path are
-  communicated via Setup Options.
+- Native QUIC: The client connects using the TLS
+  Application-Layer Protocol Negotiation (ALPN) identifier "moqt"
+  and identifies the server using a "moqt://" URI. The authority
+  and path are communicated via Setup Options.
 - WebTransport: The client establishes a WebTransport session over
   HTTP/3, using an HTTPS URI derived from the moqt:// URI.
 
-MOQT can run over native QUIC or over WebTransport over HTTP/3.
-While both provide stream multiplexing and secure transport, the
-deployment model and some capabilities are constrained differently,
-especially in browser-based WebTransport environments. Applications
-should treat them as functionally similar substrates, not strictly
-identical ones.
+Both provide stream multiplexing and secure transport, though the
+deployment model differs — particularly in browser-based environments
+where only WebTransport is available. Applications should treat them
+as functionally similar substrates with some environment-specific
+constraints.
 
 After the transport connection is established, each endpoint opens a
 unidirectional control stream and sends a SETUP message. The SETUP
@@ -602,10 +611,13 @@ PUBLISH:
 
 FETCH:
 : A subscriber requests a specific range of previously published
-  objects. Unlike SUBSCRIBE, which delivers future objects, FETCH
-  retrieves historical data. A Joining Fetch can be associated with
-  a subscription to fill the gap between stored history and the
-  live edge.
+  objects. Unlike SUBSCRIBE, which delivers objects as they are
+  produced going forward, FETCH retrieves objects that already
+  exist. A subscriber that joins a track mid-stream typically
+  needs both: a SUBSCRIBE to receive new objects, and a FETCH
+  (called a Joining Fetch) to retrieve the recent objects needed
+  to start decoding — for example, the beginning of the current
+  video group of pictures.
 
 Namespace Discovery:
 : Publishers advertise available namespaces via PUBLISH_NAMESPACE.
@@ -640,12 +652,23 @@ entirely. Two timeout mechanisms support controlled data loss:
 - Object Delivery Timeout: If an object cannot be sent within this
   duration after its first byte was produced, it is discarded.
 - Subgroup Delivery Timeout: If a completed subgroup's data is not
-  fully acknowledged within this duration, the stream is reset.
+  fully acknowledged within this duration, the stream is reset —
+  meaning any undelivered data on that stream is abandoned and will
+  not be retransmitted.
 
 Objects can be sent on QUIC streams (reliable, in-order within the
 stream) or as QUIC datagrams (unreliable, low-latency). The choice
 is the Object Forwarding Preference, set per-object by the original
 publisher.
+
+Client side Adaptive Bitrate (ABR) is possible by either ending a
+subscription and replace it with another track that is another
+represenation at another bit-rate than the previous one. Steering
+these changes to be done at the next group boundary.
+
+The WG is working on sender side ABR where the publisher uses
+its understanding of the congestion situation to select the
+set of tracks to be published to the subscriber.
 
 ## Extensibility and Session Management {#extensibility}
 
@@ -662,13 +685,15 @@ Message Parameters:
   peer-to-peer and are not forwarded by relays.
 
 Properties:
-: Per-track and per-object metadata that IS forwarded and cached by
-  relays. Properties use IANA-registered type codes. Unknown
-  properties must be forwarded unchanged.
+: Per-track and per-object metadata that is forwarded and cached by
+  relays, unlike Message Parameters. Properties use IANA-registered
+  type codes. Unknown properties must be forwarded unchanged.
 
-GREASE:
-: Reserved code points in all registries ensure implementations
-  correctly handle unknown values without closing sessions.
+GREASE (Generate Random Extensions And Sustain Extensibility):
+: Reserved code points that implementations may send to exercise
+  their peers' handling of unknown values. This ensures that
+  deployed software does not break when new extensions are
+  introduced.
 
 GOAWAY supports graceful session migration and can reduce disruption
 during relay maintenance or replacement, but continuity depends on
@@ -704,7 +729,11 @@ The MOQT Streaming Format (MSF) {{I-D.ietf-moq-msf}} is the primary
 streaming format defined for MoQ. It uses LOC (Low
 Overhead Container) {{I-D.ietf-moq-loc}} packaging, where each
 encoded media sample (audio frame or video frame) is placed in a
-separate MOQT object.
+separate MOQT object. This one-sample-per-object mapping allows
+the transport to make independent delivery decisions for each
+frame — for example, prioritising base-layer video frames over
+enhancement layers, or dropping an expired frame without affecting
+the delivery of subsequent frames.
 
 MSF defines:
 
@@ -741,8 +770,10 @@ workflows that use ISO-BMFF containers and existing DRM systems.
 
 Key differences from base MSF:
 
-- Objects contain CMAF Chunks (moof+mdat boxes) rather than raw
-  codec samples.
+- Objects contain CMAF Chunks rather than raw codec samples. A
+  CMAF Chunk is the elementary media segment structure used by
+  ISO-BMFF-based streaming (the container format behind DASH and
+  HLS fMP4), consisting of metadata and media data boxes.
 - Initialization segments (CMAF Headers) are carried in the catalog
   as base64-encoded inline data.
 - Content protection uses Common Encryption (CENC) with commercial
@@ -794,7 +825,7 @@ the underlying connection. This provides:
 - Server authentication (and optionally mutual authentication).
 - Protection against on-path attackers between adjacent nodes.
 
-However, hop-by-hop security does NOT protect content from relays.
+However, hop-by-hop security does not protect content from relays.
 A relay terminates the TLS session and has access to all MOQT
 message contents, including object payloads, unless additional
 end-to-end protection is applied.
@@ -810,9 +841,12 @@ The scheme:
 - Encrypts the object payload and optional encrypted properties.
 - Authenticates the group ID, object ID, Full Track Name, and
   immutable properties.
-- Derives per-track keys from a shared base key using HKDF.
-- Forms nonces from the group ID and object ID, guaranteeing
-  uniqueness.
+- Derives per-track keys from a shared base key using HKDF (a
+  standard key derivation function that deterministically produces
+  cryptographic keys from input material).
+- Forms a unique nonce (a value used exactly once) for each object
+  from the group ID and object ID, ensuring that no two objects
+  are encrypted with the same parameters.
 
 Relays can still route and cache objects based on unencrypted
 metadata (track names, group IDs, priorities, object properties)
@@ -842,15 +876,17 @@ token before forwarding content or establishing upstream
 subscriptions. Tokens can be registered with session-scoped aliases
 to avoid retransmitting large values on every message.
 
-The two defined authorization schemes that operate
-over this mechanism:
+The working group has defined two authorization schemes that
+operate over this mechanism:
 
 - Privacy Pass Authentication {{I-D.ietf-moq-privacy-pass-auth}} —
   provides privacy-preserving, unlinkable authorization using
   Privacy Pass tokens. It supports fine-grained access control
   through namespace and track name matching rules, and defines
   mechanisms for continuous re-authorization over long-lived
-  sessions using batched tokens or a reverse issuance flow.
+  sessions — either by obtaining multiple tokens in advance
+  (batched issuance) or by exchanging a validated token for fresh
+  ones directly with the relay (reverse issuance flow).
 
 - Common Access Tokens (C4M) {{I-D.ietf-moq-c4m}} — provides a
   bearer token scheme using structured tokens with claims that
@@ -909,7 +945,9 @@ Defining a MoQ application requires decisions in each of the
 following areas:
 
 Transport version:
-: Which MOQT version (ALPN value) the application requires. This
+: Which MOQT version the application requires, as identified by
+  the protocol's ALPN string (the identifier used during TLS
+  connection setup to select the application protocol). This
   determines the available protocol features.
 
 Streaming format and catalog:
