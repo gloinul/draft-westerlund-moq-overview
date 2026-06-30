@@ -663,11 +663,9 @@ GREASE:
 : Reserved code points in all registries ensure implementations
   correctly handle unknown values without closing sessions.
 
-Session migration is supported via the GOAWAY message. A server
-sends GOAWAY to signal that the client should establish a new session
-(optionally to a different URI) and migrate its subscriptions. This
-enables server maintenance and load balancing without disrupting
-media delivery.
+GOAWAY supports graceful session migration and can reduce disruption
+during relay maintenance or replacement, but continuity depends on
+object availability, timing, and application/session policy.
 
 
 # Streaming Formats {#streaming-formats}
