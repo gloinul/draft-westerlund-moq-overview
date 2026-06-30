@@ -30,6 +30,7 @@ informative:
 
    RFC9000:
    RFC9605:
+   RFC9420:
    I-D.ietf-moq-transport:
    I-D.ietf-moq-msf:
    I-D.ietf-moq-cmsf:
@@ -816,9 +817,9 @@ elements depend on the object security scheme and application
 profile.
 
 Key distribution is out of scope for the MoQ specifications —
-applications use external key management systems (e.g., MLS-based
-key distribution for conferencing, or out-of-band provisioning for
-streaming).
+applications use external key management systems (e.g., MLS-based key
+distribution for conferencing {{RFC9420}}, or out-of-band provisioning
+for streaming).
 
 ## Authorization {#authorization}
 
