@@ -431,11 +431,12 @@ manage subscriptions on each session independently and can
 aggregate multiple downstream subscriptions into a single upstream
 subscription.
 
-MOQT supports graceful session migration: a relay that needs to
-shut down sends a GOAWAY message directing its peers to reconnect
-to a different server. The peers then establish new sessions and
-re-issue their subscriptions, allowing relay maintenance or
-replacement without disrupting end-to-end delivery.
+MOQT supports graceful session migration: a relay that needs to shut
+down sends a GOAWAY message directing its peers to reconnect to a
+different server. The peers then establish new sessions and re-issue
+their subscriptions, allowing relay maintenance or replacement, but
+continuity depends on object availability, timing, and
+application/session policy.
 
 
 # Data Model {#data-model}
