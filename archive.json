@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-06-18T02:36:03.689230+00:00",
+  "timestamp": "2026-07-02T02:08:09.569396+00:00",
   "repo": "gloinul/draft-westerlund-moq-overview",
   "labels": [
     {
@@ -55,16 +55,24 @@
       "id": "I_kwDONfywY88AAAABFoD2UA",
       "title": "Are we inline with the object security draft?",
       "url": "https://github.com/gloinul/draft-westerlund-moq-overview/issues/4",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "zaheduzzaman",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/gloinul/draft-westerlund-moq-overview/blob/c9f8857138fdfb5bd39c816b1cfd80b258644627/draft-westerlund-moq-overview.md?plain=1#L510-L514\n\nIn practice the non-modifiability depends on the mechanism being used for protection, hence we can say some properties are intended to remain unchanged across relays, subscribes need to verify such properties are not changed in transit. ",
       "createdAt": "2026-06-16T08:38:17Z",
-      "updatedAt": "2026-06-16T08:38:17Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-06-30T11:23:57Z",
+      "closedAt": "2026-06-30T11:23:57Z",
+      "comments": [
+        {
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "body": "Clarified that they can be E2E authenticated and thus verified to not have been changed. ",
+          "createdAt": "2026-06-30T11:23:57Z",
+          "updatedAt": "2026-06-30T11:23:57Z"
+        }
+      ]
     },
     {
       "number": 5,
@@ -78,9 +86,17 @@
       "labels": [],
       "body": "https://github.com/gloinul/draft-westerlund-moq-overview/blob/c9f8857138fdfb5bd39c816b1cfd80b258644627/draft-westerlund-moq-overview.md?plain=1#L606\n\nIn future we would also need to include the possibility of sender side adaptation.",
       "createdAt": "2026-06-16T08:44:29Z",
-      "updatedAt": "2026-06-16T08:44:29Z",
+      "updatedAt": "2026-06-30T11:27:17Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "body": "Yes, as the mechanism is being worked on this should be possible to add in near future. ",
+          "createdAt": "2026-06-30T11:27:17Z",
+          "updatedAt": "2026-06-30T11:27:17Z"
+        }
+      ]
     },
     {
       "number": 6,
@@ -94,24 +110,32 @@
       "labels": [],
       "body": "https://github.com/gloinul/draft-westerlund-moq-overview/blob/c9f8857138fdfb5bd39c816b1cfd80b258644627/draft-westerlund-moq-overview.md?plain=1#L529-L530\n\nWhile this is true, the relay still need to apply authorization and publisher trust policy before caching - this hinted in the dos draft. May be we should clarify this.",
       "createdAt": "2026-06-16T08:49:38Z",
-      "updatedAt": "2026-06-16T08:49:38Z",
+      "updatedAt": "2026-06-30T11:37:05Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "body": "I did add a paragraph in the Relays section (3.3) to make clear that they are authorization enforcement points. So please check if this resolves your issue.",
+          "createdAt": "2026-06-30T11:37:05Z",
+          "updatedAt": "2026-06-30T11:37:05Z"
+        }
+      ]
     },
     {
       "number": 7,
       "id": "I_kwDONfywY88AAAABFoPazw",
       "title": "Session continuation after migration depends on other factors too",
       "url": "https://github.com/gloinul/draft-westerlund-moq-overview/issues/7",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "zaheduzzaman",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/gloinul/draft-westerlund-moq-overview/blob/c9f8857138fdfb5bd39c816b1cfd80b258644627/draft-westerlund-moq-overview.md?plain=1#L658-L660\n\nGOAWAY supports graceful migration, but continuity still depends on implementation, buffering, object retention, authorization continuity, and timing. The transport draft includes GOAWAY/session management mechanisms, but does not magically guarantee zero disruption in all deployments. Hence it would be good to highlight this in the overview document.\n\nSuggested text \n\n`GOAWAY supports graceful session migration and can reduce disruption during relay maintenance or replacement, but continuity depends on object availability, timing, and application/session policy`",
       "createdAt": "2026-06-16T09:05:38Z",
-      "updatedAt": "2026-06-16T09:05:55Z",
-      "closedAt": null,
+      "updatedAt": "2026-06-30T11:42:14Z",
+      "closedAt": "2026-06-30T11:42:14Z",
       "comments": []
     },
     {
@@ -119,31 +143,46 @@
       "id": "I_kwDONfywY88AAAABFohIzg",
       "title": "Subgroup definition",
       "url": "https://github.com/gloinul/draft-westerlund-moq-overview/issues/9",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "zaheduzzaman",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/gloinul/draft-westerlund-moq-overview/blob/c9f8857138fdfb5bd39c816b1cfd80b258644627/draft-westerlund-moq-overview.md?plain=1#L458\n\nwe have two definition of subgroups in the draft. Also does this description covers the case when Forwarding preference is DATAGRAM? if not we may mention that this description is only allowed for streaming mood.",
       "createdAt": "2026-06-16T09:44:09Z",
-      "updatedAt": "2026-06-16T09:44:09Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2026-06-30T11:52:16Z",
+      "closedAt": "2026-06-30T11:52:16Z",
+      "comments": [
+        {
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "body": "So when sent over Datagram an object do not belong to a subgroup: \n`When an Object's forwarding preference (see [Section 11.2.1.2](https://www.ietf.org/archive/id/draft-ietf-moq-transport-18.html#object-properties)) is \"Datagram\", it is not sent in Subgroups, does not belong to a Subgroup in any way, and the description in the remainder of this section does not apply.`\n\nI will make clear that the terminology are attempt to paraphrase MOQT but not binding. Also the object model is just a bit more details so I think the point is to go to MOQT if you want the real def. ",
+          "createdAt": "2026-06-30T11:48:03Z",
+          "updatedAt": "2026-06-30T11:49:35Z"
+        },
+        {
+          "author": "gloinul",
+          "authorAssociation": "OWNER",
+          "body": "I did commit this in main, see https://github.com/gloinul/draft-westerlund-moq-overview/commit/927843046f7a171e4ec06dc2b00e1ffeff16f4ec\n\nConsidering it resolved for no. ",
+          "createdAt": "2026-06-30T11:52:16Z",
+          "updatedAt": "2026-06-30T11:52:16Z"
+        }
+      ]
     },
     {
       "number": 10,
       "id": "I_kwDONfywY88AAAABFoiAIQ",
       "title": "Add reference to MLS",
       "url": "https://github.com/gloinul/draft-westerlund-moq-overview/issues/10",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "zaheduzzaman",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/gloinul/draft-westerlund-moq-overview/blob/832a27b4d7848d63654bbf556978fa733f16351b/draft-westerlund-moq-overview.md?plain=1#L819",
       "createdAt": "2026-06-16T09:46:04Z",
-      "updatedAt": "2026-06-16T09:46:04Z",
-      "closedAt": null,
+      "updatedAt": "2026-06-30T11:14:08Z",
+      "closedAt": "2026-06-30T11:14:08Z",
       "comments": []
     }
   ],
@@ -302,6 +341,146 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDONfywY87sMXQY",
+      "title": "Mls ref",
+      "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/11",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves #10 ",
+      "createdAt": "2026-06-30T11:13:58Z",
+      "updatedAt": "2026-06-30T11:14:07Z",
+      "baseRepository": "gloinul/draft-westerlund-moq-overview",
+      "baseRefName": "main",
+      "baseRefOid": "832a27b4d7848d63654bbf556978fa733f16351b",
+      "headRepository": "gloinul/draft-westerlund-moq-overview",
+      "headRefName": "mls-ref",
+      "headRefOid": "54363b6bdd9d89a45b3d48cca231b760da137642",
+      "closedAt": "2026-06-30T11:14:07Z",
+      "mergedAt": "2026-06-30T11:14:07Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "41b3c054f3fd6d1c5de8c6e16092a9a23306f03b"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 12,
+      "id": "PR_kwDONfywY87sMlg9",
+      "title": "Clarified that immutable properties is to enable E2E authentication.",
+      "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/12",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves #4 ",
+      "createdAt": "2026-06-30T11:23:19Z",
+      "updatedAt": "2026-06-30T11:26:00Z",
+      "baseRepository": "gloinul/draft-westerlund-moq-overview",
+      "baseRefName": "main",
+      "baseRefOid": "41b3c054f3fd6d1c5de8c6e16092a9a23306f03b",
+      "headRepository": "gloinul/draft-westerlund-moq-overview",
+      "headRefName": "immutable",
+      "headRefOid": "2bb0bbba809f1b39fe7dac018ae690177d93e4fd",
+      "closedAt": "2026-06-30T11:26:00Z",
+      "mergedAt": "2026-06-30T11:26:00Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "e484c1aa6f4d04dc5fadd66b5d79266d52edf28e"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 13,
+      "id": "PR_kwDONfywY87sM4E5",
+      "title": "Added a paragraph to relay to clarify that they will be authorization\u2026",
+      "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/13",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "\u2026 enforcement points.\r\n",
+      "createdAt": "2026-06-30T11:35:55Z",
+      "updatedAt": "2026-06-30T11:42:33Z",
+      "baseRepository": "gloinul/draft-westerlund-moq-overview",
+      "baseRefName": "main",
+      "baseRefOid": "e484c1aa6f4d04dc5fadd66b5d79266d52edf28e",
+      "headRepository": "gloinul/draft-westerlund-moq-overview",
+      "headRefName": "relay-authorization",
+      "headRefOid": "9b4522f5b4083fd7f3696b4ed78eb958d1ee4311",
+      "closedAt": "2026-06-30T11:42:29Z",
+      "mergedAt": "2026-06-30T11:42:29Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "4bcf55669413f8339af9700f5d5cb84d6206751e"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 14,
+      "id": "PR_kwDONfywY87sNADw",
+      "title": "Included Zahed's proposed paragraph on GOAWAY.",
+      "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/14",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Resolves #7 ",
+      "createdAt": "2026-06-30T11:41:15Z",
+      "updatedAt": "2026-06-30T11:42:16Z",
+      "baseRepository": "gloinul/draft-westerlund-moq-overview",
+      "baseRefName": "main",
+      "baseRefOid": "e484c1aa6f4d04dc5fadd66b5d79266d52edf28e",
+      "headRepository": "gloinul/draft-westerlund-moq-overview",
+      "headRefName": "go-away",
+      "headRefOid": "98afb53efe4dfefc8a710605476644b6e122c4a2",
+      "closedAt": "2026-06-30T11:42:13Z",
+      "mergedAt": "2026-06-30T11:42:13Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "c95fbdf390d8402b5c4f51241b0a86d403de2c17"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 15,
+      "id": "PR_kwDONfywY87sSgeL",
+      "title": "Review pass",
+      "url": "https://github.com/gloinul/draft-westerlund-moq-overview/pull/15",
+      "state": "MERGED",
+      "author": "gloinul",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-06-30T15:18:09Z",
+      "updatedAt": "2026-06-30T15:24:14Z",
+      "baseRepository": "gloinul/draft-westerlund-moq-overview",
+      "baseRefName": "main",
+      "baseRefOid": "927843046f7a171e4ec06dc2b00e1ffeff16f4ec",
+      "headRepository": "gloinul/draft-westerlund-moq-overview",
+      "headRefName": "review-pass",
+      "headRefOid": "6e98123715c1dd7c51db0821301e285082cb4fb0",
+      "closedAt": "2026-06-30T15:24:10Z",
+      "mergedAt": "2026-06-30T15:24:10Z",
+      "mergedBy": "gloinul",
+      "mergeCommit": {
+        "oid": "d248dbe362ad3a210950756439c92a3176022e69"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
