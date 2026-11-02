@@ -1548,12 +1548,32 @@ MOQT can be used for.<a href="#section-2-2" class="pilcrow">¶</a></p>
 <p id="section-2.1-1">In live streaming, an original publisher encodes and publishes media
 content that is delivered through one or more relays to a potentially
 large number of end subscribers.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-2.1-2">
-<pre>
- Original                                            End
- Publisher --&gt; Relay --&gt; Relay --&gt; ... --&gt; Relay --&gt; Subscribers
-                                                     (many)
-</pre><a href="#section-2.1-2" class="pilcrow">¶</a>
+<div id="section-2.1-2">
+          <div class="alignLeft art-svg artwork" id="section-2.1-2.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="96" width="512" viewBox="0 0 512 96" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 88,48 L 104,48" fill="none" stroke="black"></path>
+              <path d="M 168,48 L 184,48" fill="none" stroke="black"></path>
+              <path d="M 248,48 L 264,48" fill="none" stroke="black"></path>
+              <path d="M 312,48 L 328,48" fill="none" stroke="black"></path>
+              <path d="M 392,48 L 408,48" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="416,48 404,42.4 404,53.6" fill="black" transform="rotate(0,408,48)"></polygon>
+              <polygon class="arrowhead" points="336,48 324,42.4 324,53.6" fill="black" transform="rotate(0,328,48)"></polygon>
+              <polygon class="arrowhead" points="272,48 260,42.4 260,53.6" fill="black" transform="rotate(0,264,48)"></polygon>
+              <polygon class="arrowhead" points="192,48 180,42.4 180,53.6" fill="black" transform="rotate(0,184,48)"></polygon>
+              <polygon class="arrowhead" points="112,48 100,42.4 100,53.6" fill="black" transform="rotate(0,104,48)"></polygon>
+              <g class="text">
+                <text x="36" y="36">Original</text>
+                <text x="432" y="36">End</text>
+                <text x="40" y="52">Publisher</text>
+                <text x="136" y="52">Relay</text>
+                <text x="216" y="52">Relay</text>
+                <text x="288" y="52">...</text>
+                <text x="360" y="52">Relay</text>
+                <text x="464" y="52">Subscribers</text>
+                <text x="444" y="68">(many)</text>
+              </g>
+            </svg><a href="#section-2.1-2.1" class="pilcrow">¶</a>
+</div>
 </div>
 <p id="section-2.1-3">Key characteristics:<a href="#section-2.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1590,18 +1610,46 @@ informed selections.<a href="#section-2.1-4.5.1" class="pilcrow">¶</a></p>
 publisher and end subscriber. Each participant publishes their own
 audio and video tracks and subscribes to tracks from other
 participants.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-2.2-2">
-<pre>
- Participant A ---+            +--- Participant C
-                  |            |
-                  v            v
-              +-------+    +-------+
-              | Relay |&lt;--&gt;| Relay |
-              +-------+    +-------+
-                  ^            ^
-                  |            |
- Participant B ---+            +--- Participant D
-</pre><a href="#section-2.2-2" class="pilcrow">¶</a>
+<div id="section-2.2-2">
+          <div class="alignLeft art-svg artwork" id="section-2.2-2.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="192" width="392" viewBox="0 0 392 192" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 112,80 L 112,112" fill="none" stroke="black"></path>
+              <path d="M 144,32 L 144,72" fill="none" stroke="black"></path>
+              <path d="M 144,120 L 144,160" fill="none" stroke="black"></path>
+              <path d="M 176,80 L 176,112" fill="none" stroke="black"></path>
+              <path d="M 216,80 L 216,112" fill="none" stroke="black"></path>
+              <path d="M 248,32 L 248,72" fill="none" stroke="black"></path>
+              <path d="M 248,120 L 248,160" fill="none" stroke="black"></path>
+              <path d="M 280,80 L 280,112" fill="none" stroke="black"></path>
+              <path d="M 120,32 L 144,32" fill="none" stroke="black"></path>
+              <path d="M 248,32 L 272,32" fill="none" stroke="black"></path>
+              <path d="M 112,80 L 176,80" fill="none" stroke="black"></path>
+              <path d="M 216,80 L 280,80" fill="none" stroke="black"></path>
+              <path d="M 184,96 L 208,96" fill="none" stroke="black"></path>
+              <path d="M 112,112 L 176,112" fill="none" stroke="black"></path>
+              <path d="M 216,112 L 280,112" fill="none" stroke="black"></path>
+              <path d="M 120,160 L 144,160" fill="none" stroke="black"></path>
+              <path d="M 248,160 L 272,160" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="256,120 244,114.4 244,125.6" fill="black" transform="rotate(270,248,120)"></polygon>
+              <polygon class="arrowhead" points="256,72 244,66.4 244,77.6" fill="black" transform="rotate(90,248,72)"></polygon>
+              <polygon class="arrowhead" points="216,96 204,90.4 204,101.6" fill="black" transform="rotate(0,208,96)"></polygon>
+              <polygon class="arrowhead" points="192,96 180,90.4 180,101.6" fill="black" transform="rotate(180,184,96)"></polygon>
+              <polygon class="arrowhead" points="152,120 140,114.4 140,125.6" fill="black" transform="rotate(270,144,120)"></polygon>
+              <polygon class="arrowhead" points="152,72 140,66.4 140,77.6" fill="black" transform="rotate(90,144,72)"></polygon>
+              <g class="text">
+                <text x="48" y="36">Participant</text>
+                <text x="104" y="36">A</text>
+                <text x="328" y="36">Participant</text>
+                <text x="384" y="36">C</text>
+                <text x="144" y="100">Relay</text>
+                <text x="248" y="100">Relay</text>
+                <text x="48" y="164">Participant</text>
+                <text x="104" y="164">B</text>
+                <text x="328" y="164">Participant</text>
+                <text x="384" y="164">D</text>
+              </g>
+            </svg><a href="#section-2.2-2.1" class="pilcrow">¶</a>
+</div>
 </div>
 <p id="section-2.2-3">Key characteristics:<a href="#section-2.2-3" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1635,11 +1683,28 @@ should not have access to media content.<a href="#section-2.2-4.5.1" class="pilc
 <p id="section-2.3-1">In content contribution (ingest), a professional encoder at a
 production site publishes high-quality media to a relay operated by a
 distribution service (e.g., a CDN).<a href="#section-2.3-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-2.3-2">
-<pre>
- Encoder/       CDN Ingress      CDN Edge
- Producer  --&gt;  Relay       --&gt;  Relay(s)  --&gt;  Subscribers
-</pre><a href="#section-2.3-2" class="pilcrow">¶</a>
+<div id="section-2.3-2">
+          <div class="alignLeft art-svg artwork" id="section-2.3-2.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="80" width="472" viewBox="0 0 472 80" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 88,48 L 104,48" fill="none" stroke="black"></path>
+              <path d="M 224,48 L 240,48" fill="none" stroke="black"></path>
+              <path d="M 344,48 L 360,48" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="368,48 356,42.4 356,53.6" fill="black" transform="rotate(0,360,48)"></polygon>
+              <polygon class="arrowhead" points="248,48 236,42.4 236,53.6" fill="black" transform="rotate(0,240,48)"></polygon>
+              <polygon class="arrowhead" points="112,48 100,42.4 100,53.6" fill="black" transform="rotate(0,104,48)"></polygon>
+              <g class="text">
+                <text x="36" y="36">Encoder/</text>
+                <text x="136" y="36">CDN</text>
+                <text x="184" y="36">Ingress</text>
+                <text x="272" y="36">CDN</text>
+                <text x="308" y="36">Edge</text>
+                <text x="36" y="52">Producer</text>
+                <text x="144" y="52">Relay</text>
+                <text x="292" y="52">Relay(s)</text>
+                <text x="424" y="52">Subscribers</text>
+              </g>
+            </svg><a href="#section-2.3-2.1" class="pilcrow">¶</a>
+</div>
 </div>
 <p id="section-2.3-3">Key characteristics:<a href="#section-2.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1774,10 +1839,18 @@ AI produced dissemination,  or testing.<a href="#section-3.3-2.2.1" class="pilcr
 </dd>
         <dd class="break"></dd>
 </dl>
-<div class="alignLeft art-text artwork" id="section-3.3-3">
-<pre>
- Publisher &lt;--&gt; Subscriber
-</pre><a href="#section-3.3-3" class="pilcrow">¶</a>
+<div id="section-3.3-3">
+          <div class="alignLeft art-svg artwork" id="section-3.3-3.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="64" width="208" viewBox="0 0 208 64" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 88,32 L 112,32" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="120,32 108,26.4 108,37.6" fill="black" transform="rotate(0,112,32)"></polygon>
+              <polygon class="arrowhead" points="96,32 84,26.4 84,37.6" fill="black" transform="rotate(180,88,32)"></polygon>
+              <g class="text">
+                <text x="40" y="36">Publisher</text>
+                <text x="164" y="36">Subscriber</text>
+              </g>
+            </svg><a href="#section-3.3-3.1" class="pilcrow">¶</a>
+</div>
 </div>
 <span class="break"></span><dl class="dlParallel" id="section-3.3-4">
           <dt id="section-3.3-4.1">Single relay:</dt>
@@ -1787,10 +1860,22 @@ subscribers. The relay provides fan-out and caching.<a href="#section-3.3-4.2.1"
 </dd>
         <dd class="break"></dd>
 </dl>
-<div class="alignLeft art-text artwork" id="section-3.3-5">
-<pre>
- Publisher &lt;--&gt; Relay &lt;--&gt; Subscriber(s)
-</pre><a href="#section-3.3-5" class="pilcrow">¶</a>
+<div id="section-3.3-5">
+          <div class="alignLeft art-svg artwork" id="section-3.3-5.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="64" width="320" viewBox="0 0 320 64" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 88,32 L 112,32" fill="none" stroke="black"></path>
+              <path d="M 176,32 L 200,32" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="208,32 196,26.4 196,37.6" fill="black" transform="rotate(0,200,32)"></polygon>
+              <polygon class="arrowhead" points="184,32 172,26.4 172,37.6" fill="black" transform="rotate(180,176,32)"></polygon>
+              <polygon class="arrowhead" points="120,32 108,26.4 108,37.6" fill="black" transform="rotate(0,112,32)"></polygon>
+              <polygon class="arrowhead" points="96,32 84,26.4 84,37.6" fill="black" transform="rotate(180,88,32)"></polygon>
+              <g class="text">
+                <text x="40" y="36">Publisher</text>
+                <text x="144" y="36">Relay</text>
+                <text x="264" y="36">Subscriber(s)</text>
+              </g>
+            </svg><a href="#section-3.3-5.1" class="pilcrow">¶</a>
+</div>
 </div>
 <span class="break"></span><dl class="dlParallel" id="section-3.3-6">
           <dt id="section-3.3-6.1">Relay tree:</dt>
@@ -1801,10 +1886,28 @@ model.<a href="#section-3.3-6.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
-<div class="alignLeft art-text artwork" id="section-3.3-7">
-<pre>
- Publisher &lt;--&gt; Origin Relay &lt;--&gt; Edge Relay(s) &lt;--&gt; Subscriber(s)
-</pre><a href="#section-3.3-7" class="pilcrow">¶</a>
+<div id="section-3.3-7">
+          <div class="alignLeft art-svg artwork" id="section-3.3-7.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="64" width="528" viewBox="0 0 528 64" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 88,32 L 112,32" fill="none" stroke="black"></path>
+              <path d="M 232,32 L 256,32" fill="none" stroke="black"></path>
+              <path d="M 384,32 L 408,32" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="416,32 404,26.4 404,37.6" fill="black" transform="rotate(0,408,32)"></polygon>
+              <polygon class="arrowhead" points="392,32 380,26.4 380,37.6" fill="black" transform="rotate(180,384,32)"></polygon>
+              <polygon class="arrowhead" points="264,32 252,26.4 252,37.6" fill="black" transform="rotate(0,256,32)"></polygon>
+              <polygon class="arrowhead" points="240,32 228,26.4 228,37.6" fill="black" transform="rotate(180,232,32)"></polygon>
+              <polygon class="arrowhead" points="120,32 108,26.4 108,37.6" fill="black" transform="rotate(0,112,32)"></polygon>
+              <polygon class="arrowhead" points="96,32 84,26.4 84,37.6" fill="black" transform="rotate(180,88,32)"></polygon>
+              <g class="text">
+                <text x="40" y="36">Publisher</text>
+                <text x="148" y="36">Origin</text>
+                <text x="200" y="36">Relay</text>
+                <text x="284" y="36">Edge</text>
+                <text x="340" y="36">Relay(s)</text>
+                <text x="472" y="36">Subscriber(s)</text>
+              </g>
+            </svg><a href="#section-3.3-7.1" class="pilcrow">¶</a>
+</div>
 </div>
 <span class="break"></span><dl class="dlParallel" id="section-3.3-8">
           <dt id="section-3.3-8.1">Relay mesh:</dt>
@@ -1818,17 +1921,52 @@ simultaneously and there is no single origin.<a href="#section-3.3-8.2.1" class=
 </dd>
         <dd class="break"></dd>
 </dl>
-<div class="alignLeft art-text artwork" id="section-3.3-9">
-<pre>
- Publisher A &lt;--&gt; Relay 1 &lt;----&gt; Relay 2 &lt;--&gt; Subscriber C
-                   ^    ^       ^    ^
-                   |     \     /     |
-                   |      v   v      |
-                   |     Relay 3     |
-                   |       ^         |
-                   v       |         v
-         Subscriber B  Publisher D  Subscriber E
-</pre><a href="#section-3.3-9" class="pilcrow">¶</a>
+<div id="section-3.3-9">
+          <div class="alignLeft art-svg artwork" id="section-3.3-9.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="176" width="464" viewBox="0 0 464 176" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 152,48 L 152,128" fill="none" stroke="black"></path>
+              <path d="M 216,112 L 216,128" fill="none" stroke="black"></path>
+              <path d="M 296,48 L 296,128" fill="none" stroke="black"></path>
+              <path d="M 104,32 L 128,32" fill="none" stroke="black"></path>
+              <path d="M 208,32 L 248,32" fill="none" stroke="black"></path>
+              <path d="M 328,32 L 352,32" fill="none" stroke="black"></path>
+              <path d="M 192,48 L 208,80" fill="none" stroke="black"></path>
+              <path d="M 240,80 L 256,48" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="360,32 348,26.4 348,37.6" fill="black" transform="rotate(0,352,32)"></polygon>
+              <polygon class="arrowhead" points="336,32 324,26.4 324,37.6" fill="black" transform="rotate(180,328,32)"></polygon>
+              <polygon class="arrowhead" points="304,128 292,122.4 292,133.6" fill="black" transform="rotate(90,296,128)"></polygon>
+              <polygon class="arrowhead" points="304,48 292,42.4 292,53.6" fill="black" transform="rotate(270,296,48)"></polygon>
+              <polygon class="arrowhead" points="264,48 252,42.4 252,53.6" fill="black" transform="rotate(296.565051177078,256,48)"></polygon>
+              <polygon class="arrowhead" points="256,32 244,26.4 244,37.6" fill="black" transform="rotate(0,248,32)"></polygon>
+              <polygon class="arrowhead" points="248,80 236,74.4 236,85.6" fill="black" transform="rotate(116.56505117707799,240,80)"></polygon>
+              <polygon class="arrowhead" points="224,112 212,106.4 212,117.6" fill="black" transform="rotate(270,216,112)"></polygon>
+              <polygon class="arrowhead" points="216,80 204,74.4 204,85.6" fill="black" transform="rotate(63.43494882292201,208,80)"></polygon>
+              <polygon class="arrowhead" points="216,32 204,26.4 204,37.6" fill="black" transform="rotate(180,208,32)"></polygon>
+              <polygon class="arrowhead" points="200,48 188,42.4 188,53.6" fill="black" transform="rotate(243.43494882292202,192,48)"></polygon>
+              <polygon class="arrowhead" points="160,128 148,122.4 148,133.6" fill="black" transform="rotate(90,152,128)"></polygon>
+              <polygon class="arrowhead" points="160,48 148,42.4 148,53.6" fill="black" transform="rotate(270,152,48)"></polygon>
+              <polygon class="arrowhead" points="136,32 124,26.4 124,37.6" fill="black" transform="rotate(0,128,32)"></polygon>
+              <polygon class="arrowhead" points="112,32 100,26.4 100,37.6" fill="black" transform="rotate(180,104,32)"></polygon>
+              <g class="text">
+                <text x="40" y="36">Publisher</text>
+                <text x="88" y="36">A</text>
+                <text x="160" y="36">Relay</text>
+                <text x="192" y="36">1</text>
+                <text x="280" y="36">Relay</text>
+                <text x="312" y="36">2</text>
+                <text x="404" y="36">Subscriber</text>
+                <text x="456" y="36">C</text>
+                <text x="216" y="100">Relay</text>
+                <text x="248" y="100">3</text>
+                <text x="108" y="148">Subscriber</text>
+                <text x="160" y="148">B</text>
+                <text x="216" y="148">Publisher</text>
+                <text x="264" y="148">D</text>
+                <text x="324" y="148">Subscriber</text>
+                <text x="376" y="148">E</text>
+              </g>
+            </svg><a href="#section-3.3-9.1" class="pilcrow">¶</a>
+</div>
 </div>
 <p id="section-3.3-10">In all topologies, each hop is an independent MOQT session. Relays
 manage subscriptions on each session independently and can
@@ -1859,13 +1997,27 @@ the MoQ protocol suite. The data model is defined in Section 2 of
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-hierarchy" class="section-name selfRef">Hierarchy</a>
         </h3>
 <p id="section-4.1-1">The data model has four levels:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1-2">
-<pre>
- Track
-   └── Group (join point)
-         └── Subgroup (stream-mapped unit)
-               └── Object (smallest addressable payload)
-</pre><a href="#section-4.1-2" class="pilcrow">¶</a>
+<div id="section-4.1-2">
+          <div class="alignLeft art-svg artwork" id="section-4.1-2.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="112" width="448" viewBox="0 0 448 112" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <g class="text">
+                <text x="24" y="36">Track</text>
+                <text x="32" y="52">└──</text>
+                <text x="72" y="52">Group</text>
+                <text x="120" y="52">(join</text>
+                <text x="172" y="52">point)</text>
+                <text x="80" y="68">└──</text>
+                <text x="132" y="68">Subgroup</text>
+                <text x="228" y="68">(stream-mapped</text>
+                <text x="312" y="68">unit)</text>
+                <text x="128" y="84">└──</text>
+                <text x="172" y="84">Object</text>
+                <text x="240" y="84">(smallest</text>
+                <text x="328" y="84">addressable</text>
+                <text x="412" y="84">payload)</text>
+              </g>
+            </svg><a href="#section-4.1-2.1" class="pilcrow">¶</a>
+</div>
 </div>
 <span class="break"></span><dl class="dlParallel" id="section-4.1-3">
           <dt id="section-4.1-3.1">Track:</dt>
@@ -2336,23 +2488,50 @@ DASH/HLS ecosystems and hardware-based content decryption modules.<a href="#sect
 <a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-layering" class="section-name selfRef">Layering</a>
         </h3>
 <p id="section-6.4-1">The relationship between the components is:<a href="#section-6.4-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-6.4-2">
-<pre>
- +------------------+
- | Application      |
- +------------------+
- | Streaming Format |  &lt;-- MSF or CMSF
- | (catalog, rules) |
- +------------------+
- | Media Container  |  &lt;-- LOC or CMAF
- +------------------+
- | MOQT             |  &lt;-- transport protocol
- +------------------+
- | QUIC / WebTrans  |
- +------------------+
- | UDP / IP         |
- +------------------+
-</pre><a href="#section-6.4-2" class="pilcrow">¶</a>
+<div id="section-6.4-2">
+          <div class="alignLeft art-svg artwork" id="section-6.4-2.1">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="272" width="360" viewBox="0 0 360 272" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+              <path d="M 8,32 L 8,240" fill="none" stroke="black"></path>
+              <path d="M 160,32 L 160,240" fill="none" stroke="black"></path>
+              <path d="M 8,32 L 160,32" fill="none" stroke="black"></path>
+              <path d="M 8,64 L 160,64" fill="none" stroke="black"></path>
+              <path d="M 184,80 L 200,80" fill="none" stroke="black"></path>
+              <path d="M 8,112 L 160,112" fill="none" stroke="black"></path>
+              <path d="M 184,128 L 200,128" fill="none" stroke="black"></path>
+              <path d="M 8,144 L 160,144" fill="none" stroke="black"></path>
+              <path d="M 184,160 L 200,160" fill="none" stroke="black"></path>
+              <path d="M 8,176 L 160,176" fill="none" stroke="black"></path>
+              <path d="M 8,208 L 160,208" fill="none" stroke="black"></path>
+              <path d="M 8,240 L 160,240" fill="none" stroke="black"></path>
+              <polygon class="arrowhead" points="192,160 180,154.4 180,165.6" fill="black" transform="rotate(180,184,160)"></polygon>
+              <polygon class="arrowhead" points="192,128 180,122.4 180,133.6" fill="black" transform="rotate(180,184,128)"></polygon>
+              <polygon class="arrowhead" points="192,80 180,74.4 180,85.6" fill="black" transform="rotate(180,184,80)"></polygon>
+              <g class="text">
+                <text x="64" y="52">Application</text>
+                <text x="56" y="84">Streaming</text>
+                <text x="124" y="84">Format</text>
+                <text x="224" y="84">MSF</text>
+                <text x="252" y="84">or</text>
+                <text x="284" y="84">CMSF</text>
+                <text x="56" y="100">(catalog,</text>
+                <text x="124" y="100">rules)</text>
+                <text x="40" y="132">Media</text>
+                <text x="104" y="132">Container</text>
+                <text x="224" y="132">LOC</text>
+                <text x="252" y="132">or</text>
+                <text x="284" y="132">CMAF</text>
+                <text x="36" y="164">MOQT</text>
+                <text x="248" y="164">transport</text>
+                <text x="324" y="164">protocol</text>
+                <text x="36" y="196">QUIC</text>
+                <text x="64" y="196">/</text>
+                <text x="108" y="196">WebTrans</text>
+                <text x="32" y="228">UDP</text>
+                <text x="56" y="228">/</text>
+                <text x="76" y="228">IP</text>
+              </g>
+            </svg><a href="#section-6.4-2.1" class="pilcrow">¶</a>
+</div>
 </div>
 <p id="section-6.4-3">The streaming format layer defines the media semantics. The
 container layer defines how individual samples are serialised.
