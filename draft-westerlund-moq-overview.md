@@ -490,7 +490,7 @@ Every track is identified by a Full Track Name consisting of two
 parts:
 
 Track Namespace:
-: An ordered tuple of one or more fields ( up to 32) (e.g.,
+: An ordered tuple of zero to 32 fields (e.g.,
   "example.com", "meeting123", "alice"). The namespace provides
   hierarchical structure that relays use for prefix-based routing
   and subscription matching.
@@ -600,9 +600,13 @@ exchange content:
 SUBSCRIBE:
 : A subscriber requests newly published objects for a track. The
   publisher responds with SUBSCRIBE_OK and begins forwarding
-  matching objects as they are produced. Subscription filters
-  (Largest Object, Next Group, AbsoluteStart, AbsoluteRange)
-  control which objects are delivered.
+  matching objects as they are produced. A Location Filter
+  selects which objects are delivered by specifying a start
+  (and optionally end) Location, expressed either absolutely or
+  relative to the current largest object — for example, starting
+  at the next object, the next group, or an absolute range.
+  Range Filters can further restrict delivery based on object
+  header fields and properties.
 
 PUBLISH:
 : A publisher initiates a subscription by pushing content to a
@@ -613,11 +617,14 @@ FETCH:
 : A subscriber requests a specific range of previously published
   objects. Unlike SUBSCRIBE, which delivers objects as they are
   produced going forward, FETCH retrieves objects that already
-  exist. A subscriber that joins a track mid-stream typically
-  needs both: a SUBSCRIBE to receive new objects, and a FETCH
-  (called a Joining Fetch) to retrieve the recent objects needed
-  to start decoding — for example, the beginning of the current
-  video group of pictures.
+  exist. A subscriber that joins a track mid-stream can combine
+  both behaviours in a single SUBSCRIBE: it receives new objects
+  going forward, and by including the FILL_PARAMETERS parameter it
+  also asks the publisher to deliver a "fill range" of recent
+  objects on a separate fill fetch stream — for example, the
+  beginning of the current video group of pictures needed to start
+  decoding. A standalone FETCH remains available for retrieving an
+  arbitrary range of already-published objects.
 
 Namespace Discovery:
 : Publishers advertise available namespaces via PUBLISH_NAMESPACE.
@@ -649,8 +656,10 @@ first:
 Under congestion, lower-priority content may be delayed or dropped
 entirely. Two timeout mechanisms support controlled data loss:
 
-- Object Delivery Timeout: If an object cannot be sent within this
-  duration after its first byte was produced, it is discarded.
+- Object Delivery Timeout: Measured from when the last byte of the
+  object header was received or produced. If the object cannot be
+  sent within this duration, its subgroup stream is reset (or, for
+  datagrams, the datagram is dropped).
 - Subgroup Delivery Timeout: If a completed subgroup's data is not
   fully acknowledged within this duration, the stream is reset —
   meaning any undelivered data on that stream is abandoned and will
@@ -658,8 +667,8 @@ entirely. Two timeout mechanisms support controlled data loss:
 
 Objects can be sent on QUIC streams (reliable, in-order within the
 stream) or as QUIC datagrams (unreliable, low-latency). The choice
-is the Object Forwarding Preference, set per-object by the original
-publisher.
+is the object's Delivery Mode, established by the original
+publisher by how it first transmits the object.
 
 Client side Adaptive Bitrate (ABR) is possible by either ending a
 subscription and replace it with another track that is another
@@ -1062,6 +1071,7 @@ The following persons have contributed to this document:
 
 # Acknowledgments
 
+This document has been prepared using AI tools.
 
 --- back
 
