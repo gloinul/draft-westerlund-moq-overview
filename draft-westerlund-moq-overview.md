@@ -232,7 +232,7 @@ In live streaming, an original publisher encodes and publishes media
 content that is delivered through one or more relays to a potentially
 large number of end subscribers.
 
-~~~
+~~~ aasvg
  Original                                            End
  Publisher --> Relay --> Relay --> ... --> Relay --> Subscribers
                                                      (many)
@@ -259,7 +259,7 @@ publisher and end subscriber. Each participant publishes their own
 audio and video tracks and subscribes to tracks from other
 participants.
 
-~~~
+~~~ aasvg
  Participant A ---+            +--- Participant C
                   |            |
                   v            v
@@ -289,7 +289,7 @@ In content contribution (ingest), a professional encoder at a
 production site publishes high-quality media to a relay operated by a
 distribution service (e.g., a CDN).
 
-~~~
+~~~ aasvg
  Encoder/       CDN Ingress      CDN Edge
  Producer  -->  Relay       -->  Relay(s)  -->  Subscribers
 ~~~
@@ -388,7 +388,7 @@ Point-to-point:
   intermediate relay. Suitable for contribution ingest,
   AI produced dissemination,  or testing.
 
-~~~
+~~~ aasvg
  Publisher <--> Subscriber
 ~~~
 
@@ -396,7 +396,7 @@ Single relay:
 : A publisher connects to a relay, which serves one or more
   subscribers. The relay provides fan-out and caching.
 
-~~~
+~~~ aasvg
  Publisher <--> Relay <--> Subscriber(s)
 ~~~
 
@@ -405,7 +405,7 @@ Relay tree:
   relays closer to subscribers. This is the typical CDN deployment
   model.
 
-~~~
+~~~ aasvg
  Publisher <--> Origin Relay <--> Edge Relay(s) <--> Subscriber(s)
 ~~~
 
@@ -417,7 +417,7 @@ Relay mesh:
   scenarios where content flows in multiple directions
   simultaneously and there is no single origin.
 
-~~~
+~~~ aasvg
  Publisher A <--> Relay 1 <----> Relay 2 <--> Subscriber C
                    ^    ^       ^    ^
                    |     \     /     |
@@ -452,7 +452,7 @@ the MoQ protocol suite. The data model is defined in Section 2 of
 
 The data model has four levels:
 
-~~~
+~~~ aasvg
  Track
    └── Group (join point)
          └── Subgroup (stream-mapped unit)
@@ -797,7 +797,7 @@ DASH/HLS ecosystems and hardware-based content decryption modules.
 
 The relationship between the components is:
 
-~~~
+~~~ aasvg
  +------------------+
  | Application      |
  +------------------+
