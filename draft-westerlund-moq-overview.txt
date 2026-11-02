@@ -5,8 +5,8 @@
 moq                                                        M. Westerlund
 Internet-Draft                                                  Ericsson
 Intended status: Informational                                 Z. Sarker
-Expires: 1 January 2027                                            Nokia
-                                                            30 June 2026
+Expires: 6 May 2027                                                Nokia
+                                                         2 November 2026
 
 
                         Media over QUIC Overview
@@ -53,7 +53,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 January 2027.
+   This Internet-Draft will expire on 6 May 2027.
 
 Copyright Notice
 
@@ -519,10 +519,10 @@ Table of Contents
    Every track is identified by a Full Track Name consisting of two
    parts:
 
-   Track Namespace:  An ordered tuple of one or more fields ( up to 32)
-      (e.g., "example.com", "meeting123", "alice").  The namespace
-      provides hierarchical structure that relays use for prefix-based
-      routing and subscription matching.
+   Track Namespace:  An ordered tuple of zero to 32 fields (e.g.,
+      "example.com", "meeting123", "alice").  The namespace provides
+      hierarchical structure that relays use for prefix-based routing
+      and subscription matching.
 
    Track Name:  A byte sequence identifying a specific track within the
       namespace (e.g., "video-hd", "audio", "catalog").
@@ -626,9 +626,13 @@ Table of Contents
 
    SUBSCRIBE:  A subscriber requests newly published objects for a
       track.  The publisher responds with SUBSCRIBE_OK and begins
-      forwarding matching objects as they are produced.  Subscription
-      filters (Largest Object, Next Group, AbsoluteStart, AbsoluteRange)
-      control which objects are delivered.
+      forwarding matching objects as they are produced.  A Location
+      Filter selects which objects are delivered by specifying a start
+      (and optionally end) Location, expressed either absolutely or
+      relative to the current largest object — for example, starting at
+      the next object, the next group, or an absolute range.  Range
+      Filters can further restrict delivery based on object header
+      fields and properties.
 
    PUBLISH:  A publisher initiates a subscription by pushing content to
       a subscriber.  This inverts the usual direction — the publisher
@@ -637,11 +641,14 @@ Table of Contents
    FETCH:  A subscriber requests a specific range of previously
       published objects.  Unlike SUBSCRIBE, which delivers objects as
       they are produced going forward, FETCH retrieves objects that
-      already exist.  A subscriber that joins a track mid-stream
-      typically needs both: a SUBSCRIBE to receive new objects, and a
-      FETCH (called a Joining Fetch) to retrieve the recent objects
-      needed to start decoding — for example, the beginning of the
-      current video group of pictures.
+      already exist.  A subscriber that joins a track mid-stream can
+      combine both behaviours in a single SUBSCRIBE: it receives new
+      objects going forward, and by including the FILL_PARAMETERS
+      parameter it also asks the publisher to deliver a "fill range" of
+      recent objects on a separate fill fetch stream — for example, the
+      beginning of the current video group of pictures needed to start
+      decoding.  A standalone FETCH remains available for retrieving an
+      arbitrary range of already-published objects.
 
    Namespace Discovery:  Publishers advertise available namespaces via
       PUBLISH_NAMESPACE.  Subscribers discover content by sending
@@ -673,8 +680,10 @@ Table of Contents
    Under congestion, lower-priority content may be delayed or dropped
    entirely.  Two timeout mechanisms support controlled data loss:
 
-   *  Object Delivery Timeout: If an object cannot be sent within this
-      duration after its first byte was produced, it is discarded.
+   *  Object Delivery Timeout: Measured from when the last byte of the
+      object header was received or produced.  If the object cannot be
+      sent within this duration, its subgroup stream is reset (or, for
+      datagrams, the datagram is dropped).
 
    *  Subgroup Delivery Timeout: If a completed subgroup's data is not
       fully acknowledged within this duration, the stream is reset —
@@ -683,8 +692,8 @@ Table of Contents
 
    Objects can be sent on QUIC streams (reliable, in-order within the
    stream) or as QUIC datagrams (unreliable, low-latency).  The choice
-   is the Object Forwarding Preference, set per-object by the original
-   publisher.
+   is the object's Delivery Mode, established by the original publisher
+   by how it first transmits the object.
 
    Client side Adaptive Bitrate (ABR) is possible by either ending a
    subscription and replace it with another track that is another
@@ -1095,6 +1104,8 @@ Table of Contents
 
 12.  Acknowledgments
 
+   This document has been prepared using AI tools.
+
 13.  Informative References
 
    [RFC9000]  Iyengar, J., Ed. and M. Thomson, Ed., "QUIC: A UDP-Based
@@ -1121,9 +1132,9 @@ Table of Contents
    [I-D.ietf-moq-transport]
               Nandakumar, S., Vasiliev, V., Swett, I., and A. Frindell,
               "Media over QUIC Transport", Work in Progress, Internet-
-              Draft, draft-ietf-moq-transport-18, 12 May 2026,
+              Draft, draft-ietf-moq-transport-22, 1 October 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-moq-
-              transport-18>.
+              transport-22>.
 
    [I-D.ietf-moq-msf]
               Law, W. and S. Nandakumar, "MOQT Streaming Format", Work
@@ -1142,16 +1153,16 @@ Table of Contents
               Jennings, C. F., Nandakumar, S., and R. Barnes, "End-to-
               End Secure Objects for Media over QUIC Transport", Work in
               Progress, Internet-Draft, draft-ietf-moq-secure-objects-
-              00, 2 March 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-moq-secure-objects-00>.
+              01, 6 July 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-moq-secure-objects-01>.
 
    [I-D.ietf-moq-privacy-pass-auth]
-              Nandakumar, S., Jennings, C. F., and T. Meunier, "Privacy
+              Nandakumar, S., Jennings, C., and T. Meunier, "Privacy
               Pass Authentication for Media over QUIC (MoQ)", Work in
               Progress, Internet-Draft, draft-ietf-moq-privacy-pass-
-              auth-02, 2 March 2026,
+              auth-04, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-moq-
-              privacy-pass-auth-02>.
+              privacy-pass-auth-04>.
 
    [I-D.ietf-moq-c4m]
               Law, W., Lemmons, C., Simon, G., and S. Nandakumar,
@@ -1164,24 +1175,24 @@ Table of Contents
    [I-D.ietf-moq-loc]
               Zanaty, M., Nandakumar, S., and P. Thatcher, "Low Overhead
               Media Container", Work in Progress, Internet-Draft, draft-
-              ietf-moq-loc-02, 15 March 2026,
+              ietf-moq-loc-04, 20 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-
-              02>.
+              04>.
 
    [I-D.ietf-webtrans-overview]
               Kinnear, E. and V. Vasiliev, "The WebTransport Protocol
               Framework", Work in Progress, Internet-Draft, draft-ietf-
-              webtrans-overview-12, 2 March 2026,
+              webtrans-overview-13, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-
-              webtrans-overview-12>.
+              webtrans-overview-13>.
 
    [I-D.englishm-moq-relay-dos]
               English, M., Pardue, L., Sharma, A., and I. Swett,
               "Denial-of-Service Considerations for Media over QUIC
               Relay Deployments", Work in Progress, Internet-Draft,
-              draft-englishm-moq-relay-dos-00, 2 March 2026,
+              draft-englishm-moq-relay-dos-01, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-englishm-moq-
-              relay-dos-00>.
+              relay-dos-01>.
 
 Authors' Addresses
 

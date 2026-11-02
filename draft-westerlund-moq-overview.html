@@ -15,22 +15,22 @@ together enable scalable low-latency media delivery over the Internet.
 The document explains how these components relate to each other and
 how they are composed to create interoperable media applications. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="draft-westerlund-moq-overview-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.5
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.10.0
+    platformdirs 4.13.4
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.1
+    wcwidth 0.9.2
 -->
 <link href="draft-westerlund-moq-overview.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -66,7 +66,6 @@ how they are composed to create interoperable media applications.
   src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
 @font-face {
   font-family: 'Lora';
   font-style: italic;
@@ -115,7 +114,6 @@ how they are composed to create interoperable media applications.
   src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
 @font-face {
   font-family: 'Lora';
   font-style: normal;
@@ -180,7 +178,6 @@ how they are composed to create interoperable media applications.
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
 }
 
 @font-face {
@@ -1049,11 +1046,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">MoQ Overview</td>
-<td class="right">June 2026</td>
+<td class="right">November 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Westerlund &amp; Sarker</td>
-<td class="center">Expires 1 January 2027</td>
+<td class="center">Expires 6 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1063,12 @@ svg {
 <dd class="internet-draft">draft-westerlund-moq-overview-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-06-30" class="published">30 June 2026</time>
+<time datetime="2026-11-02" class="published">2 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-01">1 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-06">6 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1129,7 +1126,7 @@ how they are composed to create interoperable media applications.<a href="#secti
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 1 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 6 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1917,7 +1914,7 @@ parts:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-4.2-2">
           <dt id="section-4.2-2.1">Track Namespace:</dt>
           <dd style="margin-left: 1.5em" id="section-4.2-2.2">
-            <p id="section-4.2-2.2.1">An ordered tuple of one or more fields ( up to 32) (e.g.,
+            <p id="section-4.2-2.2.1">An ordered tuple of zero to 32 fields (e.g.,
 "example.com", "meeting123", "alice"). The namespace provides
 hierarchical structure that relays use for prefix-based routing
 and subscription matching.<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
@@ -2066,9 +2063,13 @@ exchange content:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
           <dd style="margin-left: 1.5em" id="section-5.2-2.2">
             <p id="section-5.2-2.2.1">A subscriber requests newly published objects for a track. The
 publisher responds with SUBSCRIBE_OK and begins forwarding
-matching objects as they are produced. Subscription filters
-(Largest Object, Next Group, AbsoluteStart, AbsoluteRange)
-control which objects are delivered.<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
+matching objects as they are produced. A Location Filter
+selects which objects are delivered by specifying a start
+(and optionally end) Location, expressed either absolutely or
+relative to the current largest object — for example, starting
+at the next object, the next group, or an absolute range.
+Range Filters can further restrict delivery based on object
+header fields and properties.<a href="#section-5.2-2.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-5.2-2.3">PUBLISH:</dt>
@@ -2083,11 +2084,14 @@ offers a track rather than waiting for a subscription request.<a href="#section-
             <p id="section-5.2-2.6.1">A subscriber requests a specific range of previously published
 objects. Unlike SUBSCRIBE, which delivers objects as they are
 produced going forward, FETCH retrieves objects that already
-exist. A subscriber that joins a track mid-stream typically
-needs both: a SUBSCRIBE to receive new objects, and a FETCH
-(called a Joining Fetch) to retrieve the recent objects needed
-to start decoding — for example, the beginning of the current
-video group of pictures.<a href="#section-5.2-2.6.1" class="pilcrow">¶</a></p>
+exist. A subscriber that joins a track mid-stream can combine
+both behaviours in a single SUBSCRIBE: it receives new objects
+going forward, and by including the FILL_PARAMETERS parameter it
+also asks the publisher to deliver a "fill range" of recent
+objects on a separate fill fetch stream — for example, the
+beginning of the current video group of pictures needed to start
+decoding. A standalone FETCH remains available for retrieving an
+arbitrary range of already-published objects.<a href="#section-5.2-2.6.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-5.2-2.7">Namespace Discovery:</dt>
@@ -2134,8 +2138,10 @@ first) delivery of groups within a subscription.<a href="#section-5.3-2.3.1" cla
 entirely. Two timeout mechanisms support controlled data loss:<a href="#section-5.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.3-4.1">
-            <p id="section-5.3-4.1.1">Object Delivery Timeout: If an object cannot be sent within this
-duration after its first byte was produced, it is discarded.<a href="#section-5.3-4.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.3-4.1.1">Object Delivery Timeout: Measured from when the last byte of the
+object header was received or produced. If the object cannot be
+sent within this duration, its subgroup stream is reset (or, for
+datagrams, the datagram is dropped).<a href="#section-5.3-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-5.3-4.2">
             <p id="section-5.3-4.2.1">Subgroup Delivery Timeout: If a completed subgroup's data is not
@@ -2146,8 +2152,8 @@ not be retransmitted.<a href="#section-5.3-4.2.1" class="pilcrow">¶</a></p>
         </ul>
 <p id="section-5.3-5">Objects can be sent on QUIC streams (reliable, in-order within the
 stream) or as QUIC datagrams (unreliable, low-latency). The choice
-is the Object Forwarding Preference, set per-object by the original
-publisher.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
+is the object's Delivery Mode, established by the original
+publisher by how it first transmits the object.<a href="#section-5.3-5" class="pilcrow">¶</a></p>
 <p id="section-5.3-6">Client side Adaptive Bitrate (ABR) is possible by either ending a
 subscription and replace it with another track that is another
 represenation at another bit-rate than the previous one. Steering
@@ -2750,7 +2756,8 @@ and the EXCESSIVE_LOAD error code provide defences. See
 <section id="section-12">
       <h2 id="name-acknowledgments">
 <a href="#section-12" class="section-number selfRef">12. </a><a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
-    </h2>
+      </h2>
+<p id="section-12-1">This document has been prepared using AI tools.<a href="#section-12-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-informative-references">
@@ -2777,7 +2784,7 @@ and the EXCESSIVE_LOAD error code provide defences. See
 <dd class="break"></dd>
 <dt id="I-D.ietf-moq-transport">[I-D.ietf-moq-transport]</dt>
       <dd>
-<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-18</span>, <time datetime="2026-05-12" class="refDate">12 May 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-18">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-18</a>&gt;</span>. </dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-22</span>, <time datetime="2026-10-01" class="refDate">1 October 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-22">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-22</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-moq-msf">[I-D.ietf-moq-msf]</dt>
       <dd>
@@ -2789,11 +2796,11 @@ and the EXCESSIVE_LOAD error code provide defences. See
 <dd class="break"></dd>
 <dt id="I-D.ietf-moq-secure-objects">[I-D.ietf-moq-secure-objects]</dt>
       <dd>
-<span class="refAuthor">Jennings, C. F.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">R. Barnes</span>, <span class="refTitle">"End-to-End Secure Objects for Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-secure-objects-00</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-secure-objects-00">https://datatracker.ietf.org/doc/html/draft-ietf-moq-secure-objects-00</a>&gt;</span>. </dd>
+<span class="refAuthor">Jennings, C. F.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">R. Barnes</span>, <span class="refTitle">"End-to-End Secure Objects for Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-secure-objects-01</span>, <time datetime="2026-07-06" class="refDate">6 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-secure-objects-01">https://datatracker.ietf.org/doc/html/draft-ietf-moq-secure-objects-01</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-moq-privacy-pass-auth">[I-D.ietf-moq-privacy-pass-auth]</dt>
       <dd>
-<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Jennings, C. F.</span>, and <span class="refAuthor">T. Meunier</span>, <span class="refTitle">"Privacy Pass Authentication for Media over QUIC (MoQ)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-privacy-pass-auth-02</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-privacy-pass-auth-02">https://datatracker.ietf.org/doc/html/draft-ietf-moq-privacy-pass-auth-02</a>&gt;</span>. </dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Jennings, C.</span>, and <span class="refAuthor">T. Meunier</span>, <span class="refTitle">"Privacy Pass Authentication for Media over QUIC (MoQ)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-privacy-pass-auth-04</span>, <time datetime="2026-07-06" class="refDate">6 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-privacy-pass-auth-04">https://datatracker.ietf.org/doc/html/draft-ietf-moq-privacy-pass-auth-04</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-moq-c4m">[I-D.ietf-moq-c4m]</dt>
       <dd>
@@ -2801,15 +2808,15 @@ and the EXCESSIVE_LOAD error code provide defences. See
 <dd class="break"></dd>
 <dt id="I-D.ietf-moq-loc">[I-D.ietf-moq-loc]</dt>
       <dd>
-<span class="refAuthor">Zanaty, M.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">P. Thatcher</span>, <span class="refTitle">"Low Overhead Media Container"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-loc-02</span>, <time datetime="2026-03-15" class="refDate">15 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-02">https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-02</a>&gt;</span>. </dd>
+<span class="refAuthor">Zanaty, M.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">P. Thatcher</span>, <span class="refTitle">"Low Overhead Media Container"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-loc-04</span>, <time datetime="2026-07-20" class="refDate">20 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-04">https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-04</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.ietf-webtrans-overview">[I-D.ietf-webtrans-overview]</dt>
       <dd>
-<span class="refAuthor">Kinnear, E.</span> and <span class="refAuthor">V. Vasiliev</span>, <span class="refTitle">"The WebTransport Protocol Framework"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-overview-12</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-12">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-12</a>&gt;</span>. </dd>
+<span class="refAuthor">Kinnear, E.</span> and <span class="refAuthor">V. Vasiliev</span>, <span class="refTitle">"The WebTransport Protocol Framework"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-webtrans-overview-13</span>, <time datetime="2026-07-06" class="refDate">6 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-13">https://datatracker.ietf.org/doc/html/draft-ietf-webtrans-overview-13</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="I-D.englishm-moq-relay-dos">[I-D.englishm-moq-relay-dos]</dt>
     <dd>
-<span class="refAuthor">English, M.</span>, <span class="refAuthor">Pardue, L.</span>, <span class="refAuthor">Sharma, A.</span>, and <span class="refAuthor">I. Swett</span>, <span class="refTitle">"Denial-of-Service Considerations for Media over QUIC Relay Deployments"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-englishm-moq-relay-dos-00</span>, <time datetime="2026-03-02" class="refDate">2 March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-englishm-moq-relay-dos-00">https://datatracker.ietf.org/doc/html/draft-englishm-moq-relay-dos-00</a>&gt;</span>. </dd>
+<span class="refAuthor">English, M.</span>, <span class="refAuthor">Pardue, L.</span>, <span class="refAuthor">Sharma, A.</span>, and <span class="refAuthor">I. Swett</span>, <span class="refTitle">"Denial-of-Service Considerations for Media over QUIC Relay Deployments"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-englishm-moq-relay-dos-01</span>, <time datetime="2026-07-06" class="refDate">6 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-englishm-moq-relay-dos-01">https://datatracker.ietf.org/doc/html/draft-englishm-moq-relay-dos-01</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
